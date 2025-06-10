@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="inspection_cell">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import inspection_cell urdf file -->
+    <xacro:include filename="$(find inspection_cell_description)/urdf/inspection_cell.urdf" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="inspection_cell.ros2_control.xacro" />
+
+
+    <xacro:inspection_cell_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

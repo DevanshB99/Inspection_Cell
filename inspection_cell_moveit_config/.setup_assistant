@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: inspection_cell_description
+    relative_path: urdf/inspection_cell.urdf
+  srdf:
+    relative_path: config/inspection_cell.srdf
+  package_settings:
+    author_name: Devansh A. Bajwala
+    author_email: db7529@uw.edu
+    generated_timestamp: 1749520476
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot name="table_test" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find inspection_cell_description)/urdf/test_macro.xacro"/>
+
+  <link name="world"/>
+
+  <xacro:table name="test_table"/>
+
+  <!-- Material definition for mount block -->
+  <material name="mount_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+  
+</robot>

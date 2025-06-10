@@ -1,0 +1,39 @@
+# MoveIt uses this configuration for controller management
+
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+moveit_simple_controller_manager:
+  controller_names:
+    - inspection_cell_controllerv1
+    - ur5e_controllerv1
+    - turntable_trajectory_controllerv1
+
+  inspection_cell_controllerv1:
+    type: FollowJointTrajectory
+    joints:
+      - turntable_disc_joint
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+    action_ns: follow_joint_trajectory
+    default: true
+  ur5e_controllerv1:
+    type: FollowJointTrajectory
+    joints:
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+    action_ns: follow_joint_trajectory
+    default: true
+  turntable_trajectory_controllerv1:
+    type: FollowJointTrajectory
+    joints:
+      - turntable_disc_joint
+    action_ns: follow_joint_trajectory
+    default: true

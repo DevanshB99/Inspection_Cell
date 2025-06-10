@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="table" params="name parent_link:=world origin_xyz:='0 0 0.9144' origin_rpy:='0 0 0'">
+    
+    <!-- Table dimensions for reference -->
+    <xacro:property name="table_length" value="2.4384" />   <!-- 8 ft -->
+    <xacro:property name="table_width" value="1.524" />     <!-- 5 ft -->
+    
+    <!-- UR5e mount block dimensions -->
+    <xacro:property name="mount_length" value="0.1778" />   <!-- 7 inch -->
+    <xacro:property name="mount_width" value="0.1778" />    <!-- 7 inch -->
+    <xacro:property name="mount_height" value="0.1143" />   <!-- 4.5 inch -->
+    
+    <!-- Mount position: 52.5 inches from left = 1.3335m from center-left -->
+    <!-- Table center to left edge = 1.2192m, so 52.5in from left = 0.1143m from center -->
+    <xacro:property name="mount_x_offset" value="0.1143" />
+    
+    <link name="${name}_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://inspection_cell_description/meshes/visual/table.dae"/>
+        </geometry>
+      </visual>
+      
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://inspection_cell_description/meshes/collision/table.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${name}_link"/>
+      <origin xyz="${origin_xyz}" rpy="${origin_rpy}"/>
+    </joint>
+    
+    <!-- UR5e Mount Block -->
+    <link name="${name}_ur5e_mount_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mount_length} ${mount_width} ${mount_height}"/>
+        </geometry>
+        <material name="mount_black">
+          <color rgba="0.1 0.1 0.1 1.0"/>
+        </material>
+      </visual>
+      
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="${mount_length} ${mount_width} ${mount_height}"/>
+        </geometry>
+      </collision>
+    </link>
+    
+    <joint name="${name}_ur5e_mount_joint" type="fixed">
+      <parent link="${name}_link"/>
+      <child link="${name}_ur5e_mount_link"/>
+      <origin xyz="${mount_x_offset} 0 ${mount_height/2}" rpy="0 0 0"/>
+    </joint>
+    
+  </xacro:macro>
+
+</robot>

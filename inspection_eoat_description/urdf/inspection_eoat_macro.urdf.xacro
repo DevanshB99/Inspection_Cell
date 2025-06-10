@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="inspection_eoat">
+
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <material name="orange">
+        <color rgba="1 0.3 0.1 1"/>
+    </material>
+
+    <material name="blue">
+        <color rgba="0.2 0.2 1 1"/>
+    </material>
+
+    <!-- <material name="green">
+        <color rgba="0 1 0 1"/>
+    </material> -->
+
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+
+    <xacro:macro name="inspection_eoat" params="
+        name
+        tf_prefix
+        parent
+        *origin">
+    
+        <link name="${tf_prefix}eoat_base_link">
+            <visual>
+                <origin xyz="0 0 0.024535"/>
+                <geometry>
+                    <cylinder radius="0.0325" length="0.04907"/>
+                </geometry>
+                <material name="blue"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.024535"/>
+                <geometry>
+                    <cylinder radius="0.0325" length="0.04907"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="${tf_prefix}eoat_top_link">
+            <visual>
+                <origin xyz="0 0 0.024535"/>
+                <geometry>
+                    <cylinder radius="0.035" length="0.04907"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.024535"/>
+                <geometry>
+                    <cylinder radius="0.035" length="0.04907"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="${tf_prefix}eoat_camera_link">
+            <visual>
+                <origin xyz="0 0 0.080"/>
+                <geometry>
+                    <cylinder radius="0.0325" length="0.160"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.080"/>
+                <geometry>
+                    <cylinder radius="0.0325" length="0.160"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <link name="${tf_prefix}eoat_body_link">
+            <visual>
+                <origin xyz="0 0 0.0625"/>
+                <geometry>
+                    <box size="0.125 0.125 0.125"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0.080"/>
+                <geometry>
+                    <box size="0.125 0.125 0.125"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${tf_prefix}eoat_base_joint" type="fixed">
+            <parent link="${parent}"/>
+            <child link="${tf_prefix}eoat_base_link"/>
+            <xacro:insert_block name="origin"/>
+        </joint>
+
+        <joint name="${tf_prefix}eoat_top_joint" type="fixed">
+            <parent link="${tf_prefix}eoat_base_link"/>
+            <child link="${tf_prefix}eoat_top_link"/>
+            <origin xyz="0 0 0.04907" rpy="0 0 0"/>
+        </joint>
+
+        <joint name="${tf_prefix}eoat_body_joint" type="fixed">
+            <parent link="${tf_prefix}eoat_base_link"/>
+            <child link="${tf_prefix}eoat_body_link"/>
+            <origin xyz="0.050 0 0.125" rpy="${radians(90)} ${radians(180)} ${radians(-90)}"/>
+        </joint>
+
+        <joint name="${tf_prefix}eoat_camera_joint" type="fixed">
+            <parent link="${tf_prefix}eoat_base_link"/>
+            <child link="${tf_prefix}eoat_camera_link"/>
+            <origin xyz="0 0 0.125" rpy="${radians(90)} ${radians(180)} ${radians(-90)}"/>
+        </joint>
+
+    </xacro:macro>
+</robot>

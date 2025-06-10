@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<robot name="inspection_cell" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="name" value=""/>
+    <xacro:property name="tf_prefix" value=""/>
+    <xacro:property name="parent" value="world"/>
+
+    <xacro:include filename="inspection_eoat_macro.urdf.xacro" />
+
+    <link name="world"></link>
+
+    <!-- Attach the inspection eoat -->
+    <xacro:inspection_eoat 
+        name="${name}"
+        tf_prefix="${tf_prefix}"
+        parent="${parent}">
+        <origin xyz="0 0 0.25" rpy="0 ${radians(180)} ${radians(90)}"/>
+    </xacro:inspection_eoat>
+
+</robot>
