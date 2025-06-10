@@ -495,7 +495,7 @@
   <!-- Turntable Disc Link -->
   <link name="turntable_disc_link">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 0.1015"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
         <mesh filename="package://inspection_cell_description/meshes/collision/turntable_disc.stl"/>
       </geometry>
@@ -797,13 +797,13 @@
   <joint name="base_joint" type="fixed">
     <origin rpy="0 0 0" xyz="-0.76835 0 0"/>
     <parent link="base_link"/>
-    <child link="turntable_disc_link"/>
+    <child link="turntable_base_link"/>
   </joint>
   <!-- JOINT 1: Turntable disc rotation (DOF 1) -->
   <joint name="turntable_disc_joint" type="revolute">
-    <child link="turntable_base_link"/>
-    <parent link="turntable_disc_link"/>
-    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="turntable_base_link"/>
+    <child link="turntable_disc_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0.1015"/>
     <axis xyz="0 0 1"/>
     <limit effort="150.0" lower="-3.141592653589793" upper="3.141592653589793" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
