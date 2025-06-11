@@ -3,7 +3,7 @@
   <!--
     Inspection Cell xacro macro - UNIFIED VERSION
     
-    Kinematic Chain: World → table_link → base_link → turntable_disc_link → turntable_base_link → ur5e_mount_link → ur5e_base_link → ... → eoat_camera_link
+    NEW Kinematic Chain: World → base_link → (table_link | turntable_disc_link → turntable_base_link → ur5e_mount_link → ur_base_link → ... → eoat_camera_link)
 
   -->
 
@@ -129,6 +129,9 @@
     <!-- LINK DEFINITIONS -->
     <!-- ================================================================ -->
 
+    <!-- Base Link - Now the root of our kinematic chain -->
+    <link name="base_link"/>
+
     <!-- Table Link - 8ft x 5ft x 36in table with top center at (0,0,0) -->
     <link name="${tf_prefix}table_link">
       <visual>
@@ -140,13 +143,14 @@
       </visual>
       <collision>
         <origin xyz="0 0 -0.4572" rpy="0 0 0"/>
-        <geometry>
+        <!-- <geometry>
           <box size="2.4384 1.524 0.9144"/>
+        </geometry> -->
+        <geometry>
+          <mesh filename="package://inspection_cell_description/meshes/collision/table.stl"/>
         </geometry>
       </collision>
     </link>
-
-    <link name="base_link"/>
 
     <!-- Turntable Disc Link -->
     <link name="${tf_prefix}turntable_disc_link">
@@ -196,28 +200,21 @@
       </inertial>
     </link>
 
-    <!-- UR5e Mount Block Link - 7" x 7" x 4.5" -->
+    <!-- UR5e Mount Block Link - 7" x 7" x 4.5" - FRAME AT BASE OF BLOCK -->
     <link name="${tf_prefix}ur5e_mount_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0.05715" rpy="0 0 0"/>
         <geometry>
           <box size="0.1778 0.1778 0.1143"/>
         </geometry>
         <material name="mount_black"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0.05715" rpy="0 0 0"/>
         <geometry>
           <box size="0.1778 0.1778 0.1143"/>
         </geometry>
       </collision>
-      <inertial>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <mass value="5.0"/>
-        <inertia
-          ixx="0.01" ixy="0.0" ixz="0.0"
-          iyy="0.01" iyz="0.0" izz="0.01" />
-      </inertial>
     </link>
 
     <!-- ================================================================ -->
@@ -412,7 +409,7 @@
             ixy="${wrist_3_inertia_ixy}"
             ixz="${wrist_3_inertia_ixz}"
             iyy="${wrist_3_inertia_iyy}"
-            iyz="${wrist_3_inertia_ixz}"
+            iyz="${wrist_3_inertia_iyz}"
             izz="${wrist_3_inertia_izz}"
         />
       </inertial>
@@ -507,35 +504,29 @@
     </link>
 
     <!-- ================================================================ -->
-    <!-- UNIFIED KINEMATIC CHAIN JOINTS -->
+    <!-- NEW UNIFIED KINEMATIC CHAIN JOINTS -->
     <!-- ================================================================ -->
 
-    <!-- JOINT: Connect parent (world) to table - table positioned so top is at (0,0,0) -->
-    <joint name="${tf_prefix}table_joint" type="fixed">
+    <!-- JOINT: Connect parent (world) directly to base_link -->
+    <joint name="${tf_prefix}base_joint" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <parent link="${parent}"/>
-      <child link="${tf_prefix}table_link"/>
-    </joint>
-
-    <!-- JOINT: Connect table to base_link (at table surface center, which is (0,0,0)) -->
-    <joint name="${tf_prefix}table_to_base" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="${tf_prefix}table_link"/>
       <child link="base_link"/>
     </joint>
 
-    <!-- JOINT: Connect base_link to turntable disc (30.25 inches left of center) -->
-    <joint name="${tf_prefix}base_joint" type="fixed">
-      <origin xyz="-0.76835 0 0" rpy="0 0 0"/>
+    <!-- BRANCH 1: Connect base_link to table_link -->
+    <joint name="${tf_prefix}table_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <parent link="base_link"/>
-      <child link="${tf_prefix}turntable_base_link"/>
+      <child link="${tf_prefix}table_link"/>
     </joint>
 
-    <!-- JOINT 1: Turntable disc rotation (DOF 1) -->
+    <!-- BRANCH 2: MAIN KINEMATIC CHAIN -->
+    <!-- JOINT 1: Turntable disc rotation (DOF 1) - Connect base_link to turntable_disc_link -->
     <joint name="${tf_prefix}turntable_disc_joint" type="revolute">
-      <parent link="${tf_prefix}turntable_base_link"/>
+      <parent link="base_link"/>
       <child link="${tf_prefix}turntable_disc_link"/>
-      <origin xyz="0 0 0.1015" rpy="0 0 0"/>
+      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>
       <axis xyz="0 0 1"/>
       <limit 
         lower="${turntable_disc_lower_limit}" 
@@ -552,16 +543,23 @@
       <dynamics damping="0" friction="0"/>
     </joint>
 
-    <!-- JOINT: Connect base_link to ur5e mount (8 inches right of center) -->
+    <!-- JOINT: Connect turntable_disc_link to turntable_base_link -->
+    <joint name="${tf_prefix}disc_to_base" type="fixed">
+      <origin xyz="0 0 -0.1015" rpy="0 0 0"/>
+      <parent link="${tf_prefix}turntable_disc_link"/>
+      <child link="${tf_prefix}turntable_base_link"/>
+    </joint>
+
+    <!-- JOINT: Connect turntable_base_link to ur5e mount -->
     <joint name="${tf_prefix}base_to_mount" type="fixed">
-      <origin xyz="0.2032 0 0.057150" rpy="0 0 0"/>
-      <parent link="base_link"/>
+      <origin xyz="0.97035 0 0" rpy="0 0 0"/>
+      <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}ur5e_mount_link"/>
     </joint>
 
-    <!-- JOINT: Connect ur5e mount to ur5e base (on top of mount) -->
+    <!-- JOINT: Connect ur5e mount to ur5e base (on top of mount, adjusted for new mount frame) -->
     <joint name="${tf_prefix}mount_to_ur5e" type="fixed">
-      <origin xyz="0 0 0.057150" rpy="0 0 0"/>
+      <origin xyz="0 0 0.1143" rpy="0 0 0"/>
       <parent link="${tf_prefix}ur5e_mount_link"/>
       <child link="${tf_prefix}ur_base_link"/>
     </joint>

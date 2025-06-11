@@ -11,7 +11,6 @@
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
     <group name="disc_to_ur5e">
         <joint name="world_joint"/>
-        <joint name="table_to_base"/>
         <joint name="base_joint"/>
         <joint name="turntable_disc_joint"/>
         <joint name="base_link-base_fixed_joint"/>
@@ -27,7 +26,6 @@
     </group>
     <group name="ur5e">
         <joint name="world_joint"/>
-        <joint name="table_to_base"/>
         <joint name="base_to_mount"/>
         <joint name="mount_to_ur5e"/>
         <joint name="base_link-base_link_inertia"/>
@@ -40,7 +38,6 @@
     </group>
     <group name="turntable">
         <joint name="world_joint"/>
-        <joint name="table_to_base"/>
         <joint name="base_joint"/>
         <joint name="turntable_disc_joint"/>
     </group>
