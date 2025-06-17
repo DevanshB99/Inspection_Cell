@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://wiki.ros.org/xacro">
   <!--
-    Inspection Cell xacro macro - UNIFIED VERSION
+    Inspection Cell xacro macro - UNIFIED OBJECT-CENTRIC VERSION
     
-    NEW Kinematic Chain: World → base_link → (table_link | turntable_disc_link → turntable_base_link → ur5e_mount_link → ur_base_link → ... → eoat_camera_link)
-
+    Kinematic Chain: World → table_link → object_frame → turntable_disc_link → turntable_base_link_inertia → turntable_base_link → ur5e_mount_link → ur_base_link → ... → eoat_camera_link
+    7-DOF System: 1 Turntable + 6 UR5e Joints
+    Single Controller for Perfect Synchronization
   -->
 
   <!-- Include required dependencies -->
@@ -26,9 +27,6 @@
   </material>
   <material name="mount_black">
     <color rgba="0.1 0.1 0.1 1.0"/>
-  </material>
-  <material name="table_brown">
-    <color rgba="0.6 0.4 0.2 1.0"/>
   </material>
 
   <xacro:macro name="inspection_cell" params="
@@ -126,33 +124,29 @@
       hw_interface="${transmission_hw_interface}" />
 
     <!-- ================================================================ -->
-    <!-- LINK DEFINITIONS -->
+    <!-- LINK DEFINITIONS - OBJECT-CENTRIC UNIFIED CHAIN -->
     <!-- ================================================================ -->
 
-    <!-- Base Link - Now the root of our kinematic chain -->
-    <link name="base_link"/>
-
-    <!-- Table Link - 8ft x 5ft x 36in table with top center at (0,0,0) -->
+    <!-- Table Link - Static visualization reference -->
     <link name="${tf_prefix}table_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://inspection_cell_description/meshes/visual/table.dae"/>
         </geometry>
-        <material name="table_brown"/>
       </visual>
       <collision>
         <origin xyz="0 0 -0.4572" rpy="0 0 0"/>
-        <!-- <geometry>
-          <box size="2.4384 1.524 0.9144"/>
-        </geometry> -->
         <geometry>
           <mesh filename="package://inspection_cell_description/meshes/collision/table.stl"/>
         </geometry>
       </collision>
     </link>
 
-    <!-- Turntable Disc Link -->
+    <!-- Object Frame - ROOT of unified kinematic chain for object-centric planning -->
+    <link name="${tf_prefix}object_frame"/>
+
+    <!-- Turntable Disc Link - DOF 1 (Rotates the object) -->
     <link name="${tf_prefix}turntable_disc_link">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -176,8 +170,8 @@
       </inertial>
     </link>
 
-    <!-- Turntable Base Link -->
-    <link name="${tf_prefix}turntable_base_link">
+    <!-- Turntable Base Link Inertia - Coordinate alignment -->
+    <link name="${tf_prefix}turntable_base_link_inertia">
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
@@ -200,6 +194,9 @@
       </inertial>
     </link>
 
+    <!-- Turntable Base Link - Physical turntable base -->
+    <link name="${tf_prefix}turntable_base_link"/>
+
     <!-- UR5e Mount Block Link - 7" x 7" x 4.5" - FRAME AT BASE OF BLOCK -->
     <link name="${tf_prefix}ur5e_mount_link">
       <visual>
@@ -218,7 +215,7 @@
     </link>
 
     <!-- ================================================================ -->
-    <!-- UR5E ROBOT ARM LINKS (Following Universal Robots Structure) -->
+    <!-- UR5E ROBOT ARM LINKS (DOF 2-7) - Following Universal Robots Structure -->
     <!-- ================================================================ -->
 
     <!-- UR base_link (mounted to ur5e_mount) -->
@@ -504,33 +501,42 @@
     </link>
 
     <!-- ================================================================ -->
-    <!-- NEW UNIFIED KINEMATIC CHAIN JOINTS -->
+    <!-- INDUSTRIAL COMPATIBILITY FRAMES -->
     <!-- ================================================================ -->
 
-    <!-- JOINT: Connect parent (world) directly to base_link -->
-    <joint name="${tf_prefix}base_joint" type="fixed">
+    <link name="${tf_prefix}ft_frame"/>
+    <link name="${tf_prefix}base"/>
+    <link name="${tf_prefix}flange"/>
+    <link name="${tf_prefix}tool0"/>
+    <link name="${tf_prefix}turntable_base"/>
+
+    <!-- ================================================================ -->
+    <!-- JOINTS - OBJECT-CENTRIC UNIFIED KINEMATIC CHAIN -->
+    <!-- ================================================================ -->
+
+    <!-- Table Link - Fixed to world for visualization -->
+    <joint name="${tf_prefix}world_to_table" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <parent link="${parent}"/>
-      <child link="base_link"/>
-    </joint>
-
-    <!-- BRANCH 1: Connect base_link to table_link -->
-    <joint name="${tf_prefix}table_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="base_link"/>
       <child link="${tf_prefix}table_link"/>
     </joint>
 
-    <!-- BRANCH 2: MAIN KINEMATIC CHAIN -->
-    <!-- JOINT 1: Turntable disc rotation (DOF 1) - Connect base_link to turntable_disc_link -->
+    <!-- Object Frame - ROOT of unified kinematic chain -->
+    <joint name="${tf_prefix}table_to_object" type="fixed">
+      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>  <!-- Position object above turntable -->
+      <parent link="${tf_prefix}table_link"/>
+      <child link="${tf_prefix}object_frame"/>
+    </joint>
+
+    <!-- DOF 1: Turntable Disc Rotation - Object rotates with disc -->
     <joint name="${tf_prefix}turntable_disc_joint" type="revolute">
-      <parent link="base_link"/>
+      <parent link="${tf_prefix}object_frame"/>
       <child link="${tf_prefix}turntable_disc_link"/>
-      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- Disc below object -->
       <axis xyz="0 0 1"/>
       <limit 
         lower="${turntable_disc_lower_limit}" 
-        upper="${turntable_disc_upper_limit}" 
+        upper="${turntable_disc_upper_limit}"
         effort="${turntable_disc_effort_limit}" 
         velocity="${turntable_disc_velocity_limit}"/>
       <xacro:if value="${safety_limits}">
@@ -539,115 +545,142 @@
           soft_upper_limit="${turntable_disc_upper_limit - safety_pos_margin}" 
           k_position="${safety_k_position}" 
           k_velocity="0.0"/>
-      </xacro:if> 
+      </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
 
-    <!-- JOINT: Connect turntable_disc_link to turntable_base_link -->
-    <joint name="${tf_prefix}disc_to_base" type="fixed">
-      <origin xyz="0 0 -0.1015" rpy="0 0 0"/>
+    <!-- Turntable Base Link Inertia - Coordinate alignment -->
+    <joint name="${tf_prefix}disc_to_base_inertia" type="fixed">
       <parent link="${tf_prefix}turntable_disc_link"/>
-      <child link="${tf_prefix}turntable_base_link"/>
+      <child link="${tf_prefix}turntable_base_link_inertia"/>
+      <origin xyz="0 0 -0.1015" rpy="0 0 0"/>
     </joint>
 
-    <!-- JOINT: Connect turntable_base_link to ur5e mount -->
-    <joint name="${tf_prefix}base_to_mount" type="fixed">
-      <origin xyz="0.97035 0 0" rpy="0 0 0"/>
+    <!-- Turntable Base Link - Physical base structure -->
+    <joint name="${tf_prefix}base_inertia_to_base" type="fixed">
+      <parent link="${tf_prefix}turntable_base_link_inertia"/>
+      <child link="${tf_prefix}turntable_base_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- UR5e Mount - Connected via turntable base -->
+    <joint name="${tf_prefix}base_to_ur_mount" type="fixed">
       <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}ur5e_mount_link"/>
+      <origin xyz="0.97035 0 0" rpy="0 0 0"/>
     </joint>
 
-    <!-- JOINT: Connect ur5e mount to ur5e base (on top of mount, adjusted for new mount frame) -->
-    <joint name="${tf_prefix}mount_to_ur5e" type="fixed">
-      <origin xyz="0 0 0.1143" rpy="0 0 0"/>
+    <!-- UR5e Base - Mounted on mount block -->
+    <joint name="${tf_prefix}mount_to_ur" type="fixed">
       <parent link="${tf_prefix}ur5e_mount_link"/>
       <child link="${tf_prefix}ur_base_link"/>
+      <origin xyz="0 0 0.1143" rpy="0 0 0"/>
     </joint>
 
-    <!-- JOINT: UR base_link to base_link_inertia (UR macro file) -->
+    <!-- UR Coordinate System Alignment -->
     <joint name="${tf_prefix}base_link-base_link_inertia" type="fixed">
-      <parent link="${tf_prefix}ur_base_link" />
-      <child link="${tf_prefix}base_link_inertia" />
-      <!-- REP-103 alignment: X+ forward vs UR internal X+ backwards -->
-      <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+      <parent link="${tf_prefix}ur_base_link"/>
+      <child link="${tf_prefix}base_link_inertia"/>
+      <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
     </joint>
 
-    <!-- JOINTS 2-7: Standard UR5e joints (DOF 2-7) -->
+    <!-- ================================================================ -->
+    <!-- DOF 2-7: STANDARD UR5E JOINTS -->
+    <!-- ================================================================ -->
+
+    <!-- DOF 2: Shoulder Pan Joint -->
     <joint name="${tf_prefix}shoulder_pan_joint" type="revolute">
-      <parent link="${tf_prefix}base_link_inertia" />
-      <child link="${tf_prefix}shoulder_link" />
-      <origin xyz="${shoulder_x} ${shoulder_y} ${shoulder_z}" rpy="${shoulder_roll} ${shoulder_pitch} ${shoulder_yaw}" />
-      <axis xyz="0 0 1" />
+      <parent link="${tf_prefix}base_link_inertia"/>
+      <child link="${tf_prefix}shoulder_link"/>
+      <origin xyz="${shoulder_x} ${shoulder_y} ${shoulder_z}" rpy="${shoulder_roll} ${shoulder_pitch} ${shoulder_yaw}"/>
+      <axis xyz="0 0 1"/>
       <limit lower="${shoulder_pan_lower_limit}" upper="${shoulder_pan_upper_limit}"
         effort="${shoulder_pan_effort_limit}" velocity="${shoulder_pan_velocity_limit}"/>
       <xacro:if value="${safety_limits}">
-         <safety_controller soft_lower_limit="${shoulder_pan_lower_limit + safety_pos_margin}" soft_upper_limit="${shoulder_pan_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+        <safety_controller soft_lower_limit="${shoulder_pan_lower_limit + safety_pos_margin}" 
+                          soft_upper_limit="${shoulder_pan_upper_limit - safety_pos_margin}" 
+                          k_position="${safety_k_position}" k_velocity="0.0"/>
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
 
+    <!-- DOF 3: Shoulder Lift Joint -->
     <joint name="${tf_prefix}shoulder_lift_joint" type="revolute">
-      <parent link="${tf_prefix}shoulder_link" />
-      <child link="${tf_prefix}upper_arm_link" />
-      <origin xyz="${upper_arm_x} ${upper_arm_y} ${upper_arm_z}" rpy="${upper_arm_roll} ${upper_arm_pitch} ${upper_arm_yaw}" />
-      <axis xyz="0 0 1" />
+      <parent link="${tf_prefix}shoulder_link"/>
+      <child link="${tf_prefix}upper_arm_link"/>
+      <origin xyz="${upper_arm_x} ${upper_arm_y} ${upper_arm_z}" rpy="${upper_arm_roll} ${upper_arm_pitch} ${upper_arm_yaw}"/>
+      <axis xyz="0 0 1"/>
       <limit lower="${shoulder_lift_lower_limit}" upper="${shoulder_lift_upper_limit}"
         effort="${shoulder_lift_effort_limit}" velocity="${shoulder_lift_velocity_limit}"/>
       <xacro:if value="${safety_limits}">
-         <safety_controller soft_lower_limit="${shoulder_lift_lower_limit + safety_pos_margin}" soft_upper_limit="${shoulder_lift_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+        <safety_controller soft_lower_limit="${shoulder_lift_lower_limit + safety_pos_margin}" 
+                          soft_upper_limit="${shoulder_lift_upper_limit - safety_pos_margin}" 
+                          k_position="${safety_k_position}" k_velocity="0.0"/>
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
 
+    <!-- DOF 4: Elbow Joint -->
     <joint name="${tf_prefix}elbow_joint" type="revolute">
-      <parent link="${tf_prefix}upper_arm_link" />
-      <child link="${tf_prefix}forearm_link" />
-      <origin xyz="${forearm_x} ${forearm_y} ${forearm_z}" rpy="${forearm_roll} ${forearm_pitch} ${forearm_yaw}" />
-      <axis xyz="0 0 1" />
+      <parent link="${tf_prefix}upper_arm_link"/>
+      <child link="${tf_prefix}forearm_link"/>
+      <origin xyz="${forearm_x} ${forearm_y} ${forearm_z}" rpy="${forearm_roll} ${forearm_pitch} ${forearm_yaw}"/>
+      <axis xyz="0 0 1"/>
       <limit lower="${elbow_joint_lower_limit}" upper="${elbow_joint_upper_limit}"
         effort="${elbow_joint_effort_limit}" velocity="${elbow_joint_velocity_limit}"/>
       <xacro:if value="${safety_limits}">
-         <safety_controller soft_lower_limit="${elbow_joint_lower_limit + safety_pos_margin}" soft_upper_limit="${elbow_joint_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+        <safety_controller soft_lower_limit="${elbow_joint_lower_limit + safety_pos_margin}" 
+                          soft_upper_limit="${elbow_joint_upper_limit - safety_pos_margin}" 
+                          k_position="${safety_k_position}" k_velocity="0.0"/>
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
 
+    <!-- DOF 5: Wrist 1 Joint -->
     <joint name="${tf_prefix}wrist_1_joint" type="revolute">
-      <parent link="${tf_prefix}forearm_link" />
-      <child link="${tf_prefix}wrist_1_link" />
-      <origin xyz="${wrist_1_x} ${wrist_1_y} ${wrist_1_z}" rpy="${wrist_1_roll} ${wrist_1_pitch} ${wrist_1_yaw}" />
-      <axis xyz="0 0 1" />
+      <parent link="${tf_prefix}forearm_link"/>
+      <child link="${tf_prefix}wrist_1_link"/>
+      <origin xyz="${wrist_1_x} ${wrist_1_y} ${wrist_1_z}" rpy="${wrist_1_roll} ${wrist_1_pitch} ${wrist_1_yaw}"/>
+      <axis xyz="0 0 1"/>
       <limit lower="${wrist_1_lower_limit}" upper="${wrist_1_upper_limit}"
         effort="${wrist_1_effort_limit}" velocity="${wrist_1_velocity_limit}"/>
       <xacro:if value="${safety_limits}">
-         <safety_controller soft_lower_limit="${wrist_1_lower_limit + safety_pos_margin}" soft_upper_limit="${wrist_1_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+        <safety_controller soft_lower_limit="${wrist_1_lower_limit + safety_pos_margin}" 
+                          soft_upper_limit="${wrist_1_upper_limit - safety_pos_margin}" 
+                          k_position="${safety_k_position}" k_velocity="0.0"/>
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
 
+    <!-- DOF 6: Wrist 2 Joint -->
     <joint name="${tf_prefix}wrist_2_joint" type="revolute">
-      <parent link="${tf_prefix}wrist_1_link" />
-      <child link="${tf_prefix}wrist_2_link" />
-      <origin xyz="${wrist_2_x} ${wrist_2_y} ${wrist_2_z}" rpy="${wrist_2_roll} ${wrist_2_pitch} ${wrist_2_yaw}" />
-      <axis xyz="0 0 1" />
+      <parent link="${tf_prefix}wrist_1_link"/>
+      <child link="${tf_prefix}wrist_2_link"/>
+      <origin xyz="${wrist_2_x} ${wrist_2_y} ${wrist_2_z}" rpy="${wrist_2_roll} ${wrist_2_pitch} ${wrist_2_yaw}"/>
+      <axis xyz="0 0 1"/>
       <limit lower="${wrist_2_lower_limit}" upper="${wrist_2_upper_limit}"
              effort="${wrist_2_effort_limit}" velocity="${wrist_2_velocity_limit}"/>
       <xacro:if value="${safety_limits}">
-         <safety_controller soft_lower_limit="${wrist_2_lower_limit + safety_pos_margin}" soft_upper_limit="${wrist_2_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+        <safety_controller soft_lower_limit="${wrist_2_lower_limit + safety_pos_margin}" 
+                          soft_upper_limit="${wrist_2_upper_limit - safety_pos_margin}" 
+                          k_position="${safety_k_position}" k_velocity="0.0"/>
       </xacro:if>
       <dynamics damping="0" friction="0"/>
     </joint>
 
+    <!-- DOF 7: Wrist 3 Joint -->
     <joint name="${tf_prefix}wrist_3_joint" type="${wrist_3_joint_type}">
-      <parent link="${tf_prefix}wrist_2_link" />
-      <child link="${tf_prefix}wrist_3_link" />
-      <origin xyz="${wrist_3_x} ${wrist_3_y} ${wrist_3_z}" rpy="${wrist_3_roll} ${wrist_3_pitch} ${wrist_3_yaw}" />
-      <axis xyz="0 0 1" />
+      <parent link="${tf_prefix}wrist_2_link"/>
+      <child link="${tf_prefix}wrist_3_link"/>
+      <origin xyz="${wrist_3_x} ${wrist_3_y} ${wrist_3_z}" rpy="${wrist_3_roll} ${wrist_3_pitch} ${wrist_3_yaw}"/>
+      <axis xyz="0 0 1"/>
       <xacro:if value="${wrist_3_joint_type != 'continuous'}">
         <limit lower="${wrist_3_lower_limit}" upper="${wrist_3_upper_limit}"
           effort="${wrist_3_effort_limit}" velocity="${wrist_3_velocity_limit}"/>
         <xacro:if value="${safety_limits}">
-          <safety_controller soft_lower_limit="${wrist_3_lower_limit + safety_pos_margin}" soft_upper_limit="${wrist_3_upper_limit - safety_pos_margin}" k_position="${safety_k_position}" k_velocity="0.0"/>
+          <safety_controller soft_lower_limit="${wrist_3_lower_limit + safety_pos_margin}" 
+                            soft_upper_limit="${wrist_3_upper_limit - safety_pos_margin}" 
+                            k_position="${safety_k_position}" k_velocity="0.0"/>
         </xacro:if>
       </xacro:if>
       <xacro:unless value="${wrist_3_joint_type != 'continuous'}">
@@ -659,39 +692,38 @@
       <dynamics damping="0" friction="0"/>
     </joint>
 
-    <!-- UR STANDARD FRAMES (from ur macro) -->
-    <link name="${tf_prefix}ft_frame"/>
+    <!-- ================================================================ -->
+    <!-- STANDARD UR FRAMES -->
+    <!-- ================================================================ -->
+
     <joint name="${tf_prefix}wrist_3_link-ft_frame" type="fixed">
       <parent link="${tf_prefix}wrist_3_link"/>
       <child link="${tf_prefix}ft_frame"/>
       <origin xyz="0 0 0" rpy="${pi} 0 0"/>
     </joint>
 
-    <!-- ROS-Industrial 'base' frame -->
-    <link name="${tf_prefix}base"/>
     <joint name="${tf_prefix}base_link-base_fixed_joint" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
-      <parent link="${tf_prefix}base_link"/>
+      <parent link="${tf_prefix}ur_base_link"/>
       <child link="${tf_prefix}base"/>
     </joint>
 
-    <!-- ROS-Industrial 'flange' frame -->
-    <link name="${tf_prefix}flange" />
     <joint name="${tf_prefix}wrist_3-flange" type="fixed">
-      <parent link="${tf_prefix}wrist_3_link" />
-      <child link="${tf_prefix}flange" />
-      <origin xyz="0 0 0" rpy="0 ${-pi/2.0} ${-pi/2.0}" />
+      <parent link="${tf_prefix}wrist_3_link"/>
+      <child link="${tf_prefix}flange"/>
+      <origin xyz="0 0 0" rpy="0 ${-pi/2.0} ${-pi/2.0}"/>
     </joint>
 
-    <!-- ROS-Industrial 'tool0' frame -->
-    <link name="${tf_prefix}tool0"/>
     <joint name="${tf_prefix}flange-tool0" type="fixed">
       <origin xyz="0 0 0" rpy="${pi/2.0} 0 ${pi/2.0}"/>
       <parent link="${tf_prefix}flange"/>
       <child link="${tf_prefix}tool0"/>
     </joint>
 
-    <!-- EOAT JOINTS: Attach inspection tool to UR tool0 -->
+    <!-- ================================================================ -->
+    <!-- EOAT ATTACHMENT -->
+    <!-- ================================================================ -->
+
     <joint name="${tf_prefix}eoat_base_joint" type="fixed">
       <parent link="${tf_prefix}tool0"/>
       <child link="${tf_prefix}eoat_base_link"/>
@@ -714,6 +746,16 @@
       <parent link="${tf_prefix}eoat_base_link"/>
       <child link="${tf_prefix}eoat_camera_link"/>
       <origin xyz="0 0 0.125" rpy="${radians(90)} ${radians(180)} ${radians(-90)}"/>
+    </joint>
+
+    <!-- ================================================================ -->
+    <!-- INDUSTRIAL COMPATIBILITY FRAMES -->
+    <!-- ================================================================ -->
+
+    <joint name="${tf_prefix}turntable_base_link-turntable_base_fixed_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${tf_prefix}turntable_base_link"/>
+      <child link="${tf_prefix}turntable_base"/>
     </joint>
 
   </xacro:macro>
