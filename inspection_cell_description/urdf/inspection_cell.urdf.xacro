@@ -86,16 +86,10 @@
    <xacro:property name="hash" value="$(arg hash)" />
 
    <!-- ================================================================ -->
-   <!-- WORLD LINK -->
+   <!-- OBJECT FRAME -->
    <!-- ================================================================ -->
-   
-   <link name="world"/>
 
-   <joint name="world_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="world" />
-      <child link="table_link" />
-   </joint>
+   <link name="object_frame"/>
 
    <!-- ================================================================ -->
    <!-- GROUND PLANE FOR SIMULATION -->
@@ -121,7 +115,7 @@
 
      <joint name="ground_plane_joint" type="fixed">
        <origin xyz="0 0 -0.01" rpy="0 0 0"/>
-       <parent link="world"/>
+       <parent link="object_frame"/>
        <child link="ground_plane"/>
      </joint>
    </xacro:if>
@@ -132,7 +126,7 @@
    <xacro:inspection_cell
      name="$(arg name)"
      tf_prefix="$(arg tf_prefix)"
-     parent="world"
+     parent="object_frame"
      joint_limits_parameters_file="$(arg joint_limit_params)"
      kinematics_parameters_file="$(arg kinematics_params)"
      physical_parameters_file="$(arg physical_params)"

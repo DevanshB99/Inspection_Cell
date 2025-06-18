@@ -136,15 +136,13 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="0 0 -0.4572" rpy="0 0 0"/>
+        <origin xyz="0 0 -0.4515" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://inspection_cell_description/meshes/collision/table.stl"/>
+          <box size="2.4384 1.524 0.903"/>
         </geometry>
       </collision>
     </link>
 
-    <!-- Object Frame - ROOT of unified kinematic chain for object-centric planning -->
-    <link name="${tf_prefix}object_frame"/>
 
     <!-- Turntable Disc Link - DOF 1 (Rotates the object) -->
     <link name="${tf_prefix}turntable_disc_link">
@@ -514,25 +512,24 @@
     <!-- JOINTS - OBJECT-CENTRIC UNIFIED KINEMATIC CHAIN -->
     <!-- ================================================================ -->
 
-    <!-- Table Link - Fixed to world for visualization -->
-    <joint name="${tf_prefix}world_to_table" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+    <!-- Object Frame - ROOT of unified kinematic chain
+    <joint name="${tf_prefix}world_to_object" type="fixed">
+      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>  
       <parent link="${parent}"/>
-      <child link="${tf_prefix}table_link"/>
-    </joint>
-
-    <!-- Object Frame - ROOT of unified kinematic chain -->
-    <joint name="${tf_prefix}table_to_object" type="fixed">
-      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>  <!-- Position object above turntable -->
-      <parent link="${tf_prefix}table_link"/>
       <child link="${tf_prefix}object_frame"/>
+    </joint> -->
+
+    <joint name="${tf_prefix}object_to_disc" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${tf_prefix}turntable_disc_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
     </joint>
 
     <!-- DOF 1: Turntable Disc Rotation - Object rotates with disc -->
     <joint name="${tf_prefix}turntable_disc_joint" type="revolute">
-      <parent link="${tf_prefix}object_frame"/>
-      <child link="${tf_prefix}turntable_disc_link"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>  <!-- Disc below object -->
+      <parent link="${tf_prefix}turntable_disc_link"/>
+      <child link="${tf_prefix}turntable_base_link_inertia"/>
+      <origin xyz="0 0 -0.1015" rpy="0 0 0"/>   <!-- Position disc below object -->
       <axis xyz="0 0 1"/>
       <limit 
         lower="${turntable_disc_lower_limit}" 
@@ -550,17 +547,23 @@
     </joint>
 
     <!-- Turntable Base Link Inertia - Coordinate alignment -->
-    <joint name="${tf_prefix}disc_to_base_inertia" type="fixed">
-      <parent link="${tf_prefix}turntable_disc_link"/>
+    <!-- <joint name="${tf_prefix}disc_to_base_inertia" type="fixed">
+      <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}turntable_base_link_inertia"/>
-      <origin xyz="0 0 -0.1015" rpy="0 0 0"/>
-    </joint>
+      <origin xyz="-0.76835 0 0" rpy="0 0 0"/>
+    </joint> -->
 
     <!-- Turntable Base Link - Physical base structure -->
     <joint name="${tf_prefix}base_inertia_to_base" type="fixed">
       <parent link="${tf_prefix}turntable_base_link_inertia"/>
       <child link="${tf_prefix}turntable_base_link"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="${tf_prefix}ur5e_mount_to_table" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${tf_prefix}ur5e_mount_link"/>
+      <child link="${tf_prefix}table_link"/>
     </joint>
 
     <!-- UR5e Mount - Connected via turntable base -->
@@ -574,7 +577,7 @@
     <joint name="${tf_prefix}mount_to_ur" type="fixed">
       <parent link="${tf_prefix}ur5e_mount_link"/>
       <child link="${tf_prefix}ur_base_link"/>
-      <origin xyz="0 0 0.1143" rpy="0 0 0"/>
+      <origin xyz="0 0 0.1143" rpy="0 0 ${pi}"/>
     </joint>
 
     <!-- UR Coordinate System Alignment -->

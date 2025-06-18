@@ -29,10 +29,9 @@ inspection_cell_controllerv1:
       - wrist_2_joint
       - wrist_3_joint
     command_interfaces:
-      - position
+      []
     state_interfaces:
-      - position
-      - velocity
+      []
 ur5e_controllerv1:
   ros__parameters:
     joints:
@@ -43,16 +42,14 @@ ur5e_controllerv1:
       - wrist_2_joint
       - wrist_3_joint
     command_interfaces:
-      - position
+      []
     state_interfaces:
-      - position
-      - velocity
+      []
 turntable_trajectory_controllerv1:
   ros__parameters:
     joints:
       - turntable_disc_joint
     command_interfaces:
-      - position
+      []
     state_interfaces:
-      - position
-      - velocity
+      []
