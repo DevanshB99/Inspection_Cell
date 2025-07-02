@@ -512,12 +512,7 @@
     <!-- JOINTS - OBJECT-CENTRIC UNIFIED KINEMATIC CHAIN -->
     <!-- ================================================================ -->
 
-    <!-- Object Frame - ROOT of unified kinematic chain
-    <joint name="${tf_prefix}world_to_object" type="fixed">
-      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>  
-      <parent link="${parent}"/>
-      <child link="${tf_prefix}object_frame"/>
-    </joint> -->
+    <!-- Object Frame - ROOT of unified kinematic chain -->
 
     <joint name="${tf_prefix}object_to_disc" type="fixed">
       <parent link="${parent}"/>

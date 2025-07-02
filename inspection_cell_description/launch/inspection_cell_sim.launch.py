@@ -6,6 +6,7 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration
 from launch_ros.parameter_descriptions import ParameterValue
+from ur_moveit_config.launch_common import load_yaml
 
 def generate_launch_description():
     declared_arguments = [
@@ -102,6 +103,10 @@ def generate_launch_description():
         FindPackageShare("inspection_cell_description"), "config", "ros2_controllers.yaml"
     ])
 
+    # # Servo Config
+    servo_yaml = load_yaml("inspection_cell_moveit_config", "config/cell_servo.yaml")
+    servo_params = {"moveit_servo": servo_yaml}
+
     # Robot State Publisher
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
@@ -131,21 +136,28 @@ def generate_launch_description():
     ur5e_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["ur5e_controllerv1", "--controller-manager", "/controller_manager", "--inactive"],
+        arguments=["ur5e_controller", "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
     )
 
     turntable_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["turntable_trajectory_controllerv1", "--controller-manager", "/controller_manager", "--inactive"],
+        arguments=["turntable_trajectory_controller", "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
     )
 
     ur5e_to_turntable_controller = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["inspection_cell_controllerv1", "--controller-manager", "/controller_manager"],
+        arguments=["inspection_cell_controller", "--controller-manager", "/controller_manager"],
+        output="screen",
+    )
+
+    forward_position_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["inspection_cell_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
     )
 
@@ -164,6 +176,14 @@ def generate_launch_description():
         executable='rviz2',
         output='screen'
     )
+
+    servo_node = Node(
+        package="moveit_servo",
+        executable="servo_node_main",
+        name="servo_node",
+        parameters=[servo_params],
+        output="screen",
+    )
     
     return LaunchDescription(
         declared_arguments + [
@@ -173,8 +193,9 @@ def generate_launch_description():
             ur5e_controller,
             turntable_controller,
             ur5e_to_turntable_controller,
+            forward_position_controller_spawner,
             moveit_launch,
             rviz_launch,
-            
+            servo_node,
         ]
     )

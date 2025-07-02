@@ -777,12 +777,7 @@
   <!-- ================================================================ -->
   <!-- JOINTS - OBJECT-CENTRIC UNIFIED KINEMATIC CHAIN -->
   <!-- ================================================================ -->
-  <!-- Object Frame - ROOT of unified kinematic chain
-    <joint name="${tf_prefix}world_to_object" type="fixed">
-      <origin xyz="-0.76835 0 0.1015" rpy="0 0 0"/>  
-      <parent link="${parent}"/>
-      <child link="${tf_prefix}object_frame"/>
-    </joint> -->
+  <!-- Object Frame - ROOT of unified kinematic chain -->
   <joint name="object_to_disc" type="fixed">
     <parent link="object_frame"/>
     <child link="turntable_disc_link"/>
@@ -798,12 +793,7 @@
     <limit effort="150.0" lower="-3.141592653589793" upper="3.141592653589793" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-  <!-- Turntable Base Link Inertia - Coordinate alignment -->
-  <!-- <joint name="${tf_prefix}disc_to_base_inertia" type="fixed">
-      <parent link="${tf_prefix}turntable_base_link"/>
-      <child link="${tf_prefix}turntable_base_link_inertia"/>
-      <origin xyz="-0.76835 0 0" rpy="0 0 0"/>
-    </joint> -->
+
   <!-- Turntable Base Link - Physical base structure -->
   <joint name="base_inertia_to_base" type="fixed">
     <parent link="turntable_base_link_inertia"/>
@@ -825,7 +815,7 @@
   <joint name="mount_to_ur" type="fixed">
     <parent link="ur5e_mount_link"/>
     <child link="ur_base_link"/>
-    <origin rpy="0 0 0" xyz="0 0 0.1143"/>
+    <origin rpy="0 0 3.141592653589793" xyz="0 0 0.1143"/>
   </joint>
   <!-- UR Coordinate System Alignment -->
   <joint name="base_link-base_link_inertia" type="fixed">

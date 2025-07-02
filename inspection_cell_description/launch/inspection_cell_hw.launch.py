@@ -24,7 +24,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 from launch.conditions import IfCondition
-
+from ur_moveit_config.launch_common import load_yaml
 
 def launch_setup(context, *args, **kwargs):
     """
@@ -159,6 +159,10 @@ def launch_setup(context, *args, **kwargs):
         "ros2_controllers.yaml"
     ])
 
+    # Servo Yaml configuration for the unified system
+    servo_yaml = load_yaml("inspection_cell_moveit_config", "config/cell_servo.yaml")
+    servo_params = {"moveit_servo": servo_yaml}
+
     # ================================================================
     # CORE SYSTEM NODES
     # ================================================================
@@ -244,35 +248,56 @@ def launch_setup(context, *args, **kwargs):
         executable="spawner",
         name="inspection_cell_controller_spawner",
         arguments=[
-            "inspection_cell_controllerv1",
+            "inspection_cell_controller",
             "--controller-manager", "/controller_manager",
         ],
         output="screen",
     )
+    # # 8. SECONDARY: Unified 7-DOF Inspection Cell Forward Position Controller (inactive)
+    inspection_cell_forward_position_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        name="inspection_cell_forward_position_controller_spawner",
+        arguments=[
+            "inspection_cell_forward_position_controller",
+            "--controller-manager", "/controller_manager",
+            "--inactive"
+        ],
+        output="screen",
+    )    
 
-    # # 8. BACKUP: UR-only controller (inactive)
+    # # 9. BACKUP: UR-only controller (inactive)
     ur_controller_spawner = Node(
         package="controller_manager", 
         executable="spawner",
         name="ur_controller_spawner",
         arguments=[
-            "ur5e_controllerv1",
+            "ur5e_controller",
             "--controller-manager", "/controller_manager",
             "--inactive"
         ],
         output="screen",
     )
 
-    # # 9. BACKUP: Turntable-only controller (inactive)
+    # # 10. BACKUP: Turntable-only controller (inactive)
     turntable_trajectory_controller_spawner = Node(
         package="controller_manager",
         executable="spawner", 
         name="turntable_trajectory_controller_spawner",
         arguments=[
-            "turntable_trajectory_controllerv1",
+            "turntable_trajectory_controller",
             "--controller-manager", "/controller_manager",
             "--inactive"
         ],
+        output="screen",
+    )
+
+    # # 11. Servo Node (for MoveIt Servo control)
+    servo_node = Node(
+        package="moveit_servo",
+        executable="servo_node_main",
+        name="servo_node",
+        parameters=[servo_params],
         output="screen",
     )
 
@@ -280,7 +305,7 @@ def launch_setup(context, *args, **kwargs):
     # MOTION PLANNING AND VISUALIZATION
     # ================================================================
 
-    # 10. MoveIt Move Group
+    # 12. MoveIt Move Group
     moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -292,7 +317,7 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(launch_moveit)
     )
 
-    # 11. RViz
+    # 13. RViz
     rviz_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -305,110 +330,22 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # ================================================================
-    # SIMPLIFIED STARTUP SEQUENCE (Much Faster!)
-    # ================================================================
-
-    # Phase 1: Start basic nodes (1s delay)
-    phase_1_delay = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=robot_state_publisher,
-            on_start=[
-                TimerAction(
-                    period=1.0,
-                    actions=[
-                        controller_manager,
-                        ur_dashboard_client,
-                    ]
-                )
-            ],
-        )
-    )
-
-    #Phase 2: Start controller spawning (3s delay)
-    phase_2_delay = RegisterEventHandler(
-        event_handler=OnProcessStart(
-            target_action=controller_manager,
-            on_start=[
-                TimerAction(
-                    period=3.0,  # Reduced from 10.0
-                    actions=[joint_state_broadcaster_spawner]
-                )
-            ],
-        )
-    )
-
-    #Phase 3: Start joint aggregator (1s delay)
-    phase_3_delay = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[
-                TimerAction(
-                    period=1.0,  # Reduced from 2.0
-                    actions=[joint_state_aggregator]
-                )
-            ],
-        )
-    )
-
-    #Phase 4: Start trajectory controllers (1s delay)
-    phase_4_delay = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[
-                TimerAction(
-                    period=2.0,  # Reduced from 3.0
-                    actions=[
-                        inspection_cell_controller_spawner,
-                        ur_controller_spawner,
-                        turntable_trajectory_controller_spawner,
-                    ]
-                )
-            ],
-        )
-    )
-
-    #Phase 5: Start motion planning (2s delay)
-    phase_5_delay = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=inspection_cell_controller_spawner,
-            on_exit=[
-                TimerAction(
-                    period=2.0,  # Reduced from 5.0
-                    actions=[
-                        moveit_launch,
-                        rviz_launch,
-                    ]
-                )
-            ],
-        )
-    )
-
-    # ================================================================
     # RETURN ALL NODES AND EVENT HANDLERS
     # ================================================================
     
     return [
-        # Core system
         robot_state_publisher,
-        
-        # Startup sequence (much faster!)
-        # phase_1_delay,  # Basic nodes (1s)
-        # phase_2_delay,  # Controller spawning (3s) 
-        # phase_3_delay,  # Joint aggregation (1s)
-        # phase_4_delay,  # Trajectory controllers (2s)
-        # phase_5_delay,  # Motion planning (2s)
-
         controller_manager,
         ur_dashboard_client,
-        # joint_state_aggregator,
         joint_state_broadcaster_spawner,
         inspection_cell_controller_spawner,
+        inspection_cell_forward_position_controller_spawner,
         TimerAction(
-            period=2.0, actions=[moveit_launch]),  # Initial delay for joint state broadcaster
+            period=2.0, actions=[moveit_launch]),
         ur_controller_spawner,
         turntable_trajectory_controller_spawner,    
-        # moveit_launch,
         rviz_launch,
+        servo_node,
     ]
 
 

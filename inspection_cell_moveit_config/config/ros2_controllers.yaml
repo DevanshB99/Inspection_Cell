@@ -3,22 +3,26 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
-    inspection_cell_controllerv1:
+    inspection_cell_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-    ur5e_controllerv1:
+    inspection_cell_forward_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+
+    ur5e_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-    turntable_trajectory_controllerv1:
+    turntable_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-inspection_cell_controllerv1:
+inspection_cell_controller:
   ros__parameters:
     joints:
       - turntable_disc_joint
@@ -29,10 +33,21 @@ inspection_cell_controllerv1:
       - wrist_2_joint
       - wrist_3_joint
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
-ur5e_controllerv1:
+      - position
+      - velocity
+inspection_cell_forward_position_controller:
+  ros__parameters:
+    joints:
+      - turntable_disc_joint
+      - shoulder_pan_joint
+      - shoulder_lift_joint
+      - elbow_joint
+      - wrist_1_joint
+      - wrist_2_joint
+      - wrist_3_joint
+ur5e_controller:
   ros__parameters:
     joints:
       - shoulder_pan_joint
@@ -42,14 +57,16 @@ ur5e_controllerv1:
       - wrist_2_joint
       - wrist_3_joint
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
-turntable_trajectory_controllerv1:
+      - position
+      - velocity
+turntable_trajectory_controller:
   ros__parameters:
     joints:
       - turntable_disc_joint
     command_interfaces:
-      []
+      - position
     state_interfaces:
-      []
+      - position
+      - velocity
