@@ -7,7 +7,7 @@ moveit_setup_assistant_config:
   package_settings:
     author_name: Devansh A. Bajwala
     author_email: db7529@uw.edu
-    generated_timestamp: 1751491989
+    generated_timestamp: 1751493794
   control_xacro:
     command:
       - position

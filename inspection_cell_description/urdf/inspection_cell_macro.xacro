@@ -216,7 +216,7 @@
     <!-- UR5E ROBOT ARM LINKS (DOF 2-7) - Following Universal Robots Structure -->
     <!-- ================================================================ -->
 
-    <!-- UR base_link (mounted to ur5e_mount) -->
+    <!-- ur_base_link (mounted to ur5e_mount) -->
     <link name="${tf_prefix}ur_base_link"/>
     
     <!-- UR base_link_inertia (maintains UR internal coordinate system) -->
@@ -576,7 +576,7 @@
     </joint>
 
     <!-- UR Coordinate System Alignment -->
-    <joint name="${tf_prefix}base_link-base_link_inertia" type="fixed">
+    <joint name="${tf_prefix}ur_base_link-base_link_inertia" type="fixed">
       <parent link="${tf_prefix}ur_base_link"/>
       <child link="${tf_prefix}base_link_inertia"/>
       <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
@@ -700,7 +700,7 @@
       <origin xyz="0 0 0" rpy="${pi} 0 0"/>
     </joint>
 
-    <joint name="${tf_prefix}base_link-base_fixed_joint" type="fixed">
+    <joint name="${tf_prefix}ur_base_link-base_fixed_joint" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 ${pi}"/>
       <parent link="${tf_prefix}ur_base_link"/>
       <child link="${tf_prefix}base"/>

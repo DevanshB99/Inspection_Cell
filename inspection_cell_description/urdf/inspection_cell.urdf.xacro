@@ -164,7 +164,7 @@
      hash="${hash}"
      >
      
-     <!-- Position robot in the world -->
+     <!-- Position robot -->
      <ur5e_origin xyz="0 0 0" rpy="0 0 0" />
      <turntable_origin xyz="0.75 0 0" rpy="0 0 0" />
    </xacro:inspection_cell>
@@ -173,7 +173,7 @@
    <!-- GAZEBO PLUGINS -->
    <!-- ================================================================ -->
    <xacro:if value="$(arg sim_gazebo)">
-    <gazebo reference="world">
+    <gazebo reference="object_frame">
     </gazebo>
     <gazebo>
       <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
@@ -186,7 +186,7 @@
    <!-- IGNITION PLUGINS -->
    <!-- ================================================================ -->
    <xacro:if value="$(arg sim_ignition)">
-    <gazebo reference="world">
+    <gazebo reference="object_frame">
     </gazebo>
     <gazebo>
       <plugin filename="libign_ros2_control-system.so" name="ign_ros2_control::IgnitionROS2ControlPlugin">

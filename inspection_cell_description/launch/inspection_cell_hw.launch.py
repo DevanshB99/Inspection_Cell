@@ -159,10 +159,6 @@ def launch_setup(context, *args, **kwargs):
         "ros2_controllers.yaml"
     ])
 
-    # Servo Yaml configuration for the unified system
-    servo_yaml = load_yaml("inspection_cell_moveit_config", "config/cell_servo.yaml")
-    servo_params = {"moveit_servo": servo_yaml}
-
     # ================================================================
     # CORE SYSTEM NODES
     # ================================================================
@@ -292,15 +288,6 @@ def launch_setup(context, *args, **kwargs):
         output="screen",
     )
 
-    # # 11. Servo Node (for MoveIt Servo control)
-    servo_node = Node(
-        package="moveit_servo",
-        executable="servo_node_main",
-        name="servo_node",
-        parameters=[servo_params],
-        output="screen",
-    )
-
     # ================================================================
     # MOTION PLANNING AND VISUALIZATION
     # ================================================================
@@ -345,7 +332,6 @@ def launch_setup(context, *args, **kwargs):
         ur_controller_spawner,
         turntable_trajectory_controller_spawner,    
         rviz_launch,
-        servo_node,
     ]
 
 

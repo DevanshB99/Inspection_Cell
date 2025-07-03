@@ -793,7 +793,12 @@
     <limit effort="150.0" lower="-3.141592653589793" upper="3.141592653589793" velocity="3.141592653589793"/>
     <dynamics damping="0" friction="0"/>
   </joint>
-
+  <!-- Turntable Base Link Inertia - Coordinate alignment -->
+  <!-- <joint name="${tf_prefix}disc_to_base_inertia" type="fixed">
+      <parent link="${tf_prefix}turntable_base_link"/>
+      <child link="${tf_prefix}turntable_base_link_inertia"/>
+      <origin xyz="-0.76835 0 0" rpy="0 0 0"/>
+    </joint> -->
   <!-- Turntable Base Link - Physical base structure -->
   <joint name="base_inertia_to_base" type="fixed">
     <parent link="turntable_base_link_inertia"/>

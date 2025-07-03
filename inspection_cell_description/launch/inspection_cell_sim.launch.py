@@ -103,10 +103,6 @@ def generate_launch_description():
         FindPackageShare("inspection_cell_description"), "config", "ros2_controllers.yaml"
     ])
 
-    # # Servo Config
-    servo_yaml = load_yaml("inspection_cell_moveit_config", "config/cell_servo.yaml")
-    servo_params = {"moveit_servo": servo_yaml}
-
     # Robot State Publisher
     robot_state_publisher_node = Node(
         package="robot_state_publisher",
@@ -176,14 +172,6 @@ def generate_launch_description():
         executable='rviz2',
         output='screen'
     )
-
-    servo_node = Node(
-        package="moveit_servo",
-        executable="servo_node_main",
-        name="servo_node",
-        parameters=[servo_params],
-        output="screen",
-    )
     
     return LaunchDescription(
         declared_arguments + [
@@ -196,6 +184,5 @@ def generate_launch_description():
             forward_position_controller_spawner,
             moveit_launch,
             rviz_launch,
-            servo_node,
         ]
     )
