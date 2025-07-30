@@ -6,17 +6,17 @@ Based on test_sim.launch.py structure but for real hardware
 
 from launch import LaunchDescription
 from launch.actions import (
-    DeclareLaunchArgument, 
-    RegisterEventHandler, 
+    DeclareLaunchArgument,
+    RegisterEventHandler,
     TimerAction,
     IncludeLaunchDescription,
     OpaqueFunction
 )
 from launch.event_handlers import OnProcessExit, OnProcessStart
 from launch.substitutions import (
-    Command, 
-    FindExecutable, 
-    LaunchConfiguration, 
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
     PathJoinSubstitution,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -26,16 +26,17 @@ from launch_ros.parameter_descriptions import ParameterValue
 from launch.conditions import IfCondition
 from ur_moveit_config.launch_common import load_yaml
 
+
 def launch_setup(context, *args, **kwargs):
     """
     Launch setup function with context access for dynamic configuration
     """
-    
+
     # ================================================================
     # INITIALIZE LAUNCH CONFIGURATIONS WITH CONTEXT
     # ================================================================
     robot_ip = LaunchConfiguration("robot_ip")
-    ur_type = LaunchConfiguration("ur_type") 
+    ur_type = LaunchConfiguration("ur_type")
     safety_limits = LaunchConfiguration("safety_limits")
     headless_mode = LaunchConfiguration("headless_mode")
     launch_rviz = LaunchConfiguration("launch_rviz")
@@ -43,31 +44,30 @@ def launch_setup(context, *args, **kwargs):
     # controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
     use_tool_communication = LaunchConfiguration("use_tool_communication")
 
-
     # ================================================================
     # DYNAMIC CONFIGURATION WITH CONTEXT
     # ================================================================
-    
+
     # Resolve ur_type for dynamic configuration
     ur_type_value = ur_type.perform(context)
-    
+
     # UR update rate configuration
     ur_update_rate_config = PathJoinSubstitution([
         FindPackageShare("ur_robot_driver"),
-        "config", 
+        "config",
         "ur5e_update_rate.yaml"
     ])
 
     # ================================================================
     # ROBOT DESCRIPTION GENERATION
     # ================================================================
-    
+
     robot_description_content = Command([
         PathJoinSubstitution([FindExecutable(name="xacro")]),
         " ",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "urdf", 
+            FindPackageShare("inspection_cell_description"),
+            "urdf",
             "inspection_cell.urdf.xacro"
         ]),
         " ",
@@ -88,58 +88,58 @@ def launch_setup(context, *args, **kwargs):
         # UR Driver Required Files
         "script_filename:=",
         PathJoinSubstitution([
-            FindPackageShare("ur_client_library"), 
-            "resources", 
+            FindPackageShare("ur_client_library"),
+            "resources",
             "external_control.urscript"
         ]),
         " ",
         "output_recipe_filename:=",
         PathJoinSubstitution([
-            FindPackageShare("ur_robot_driver"), 
-            "resources", 
+            FindPackageShare("ur_robot_driver"),
+            "resources",
             "rtde_output_recipe.txt"
         ]),
         " ",
         "input_recipe_filename:=",
         PathJoinSubstitution([
-            FindPackageShare("ur_robot_driver"), 
-            "resources", 
+            FindPackageShare("ur_robot_driver"),
+            "resources",
             "rtde_input_recipe.txt"
         ]),
         " ",
         # System Configuration Files
         "joint_limit_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "joint_limits.yaml"
         ]),
         " ",
         "kinematics_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "my_robot_calibration.yaml"
         ]),
         " ",
         "physical_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "physical_parameters.yaml"
         ]),
         " ",
         "visual_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "visual_parameters.yaml"
         ]),
         " ",
         "initial_positions_file:=",
         PathJoinSubstitution([
             FindPackageShare("inspection_cell_description"),
-            "config", 
+            "config",
             "initial_positions.yaml"
         ]),
     ])
@@ -151,11 +151,11 @@ def launch_setup(context, *args, **kwargs):
     # ================================================================
     # CONFIGURATION FILES
     # ================================================================
-    
+
     # Controllers configuration for the unified system
     controllers_yaml = PathJoinSubstitution([
         FindPackageShare("inspection_cell_description"),
-        "config", 
+        "config",
         "ros2_controllers.yaml"
     ])
 
@@ -178,19 +178,20 @@ def launch_setup(context, *args, **kwargs):
         executable="ros2_control_node",
         # name="controller_manager",
         parameters=[
-            #robot_description,
+            # robot_description,
             ur_update_rate_config,
             controllers_yaml,
         ],
         output="screen",
-        remappings=[("/controller_manager/robot_description", "/robot_description")],
+        remappings=[
+            ("/controller_manager/robot_description", "/robot_description")],
     )
 
     # 3. Joint State Aggregator
     joint_state_aggregator = Node(
         package="joint_state_publisher",
         executable="joint_state_publisher",
-        name="joint_state_aggregator", 
+        name="joint_state_aggregator",
         parameters=[
             {
                 "source_list": [
@@ -213,7 +214,7 @@ def launch_setup(context, *args, **kwargs):
     # 4. UR Dashboard Client (for robot status)
     ur_dashboard_client = Node(
         package="ur_robot_driver",
-        executable="dashboard_client", 
+        executable="dashboard_client",
         name="ur_dashboard_client",
         parameters=[{"robot_ip": robot_ip}],
         output="screen",
@@ -225,7 +226,7 @@ def launch_setup(context, *args, **kwargs):
 
     # 6. Joint State Broadcaster (with remapping)
     joint_state_broadcaster_spawner = Node(
-        package="controller_manager", 
+        package="controller_manager",
         executable="spawner",
         name="joint_state_broadcaster_spawner",
         arguments=[
@@ -246,7 +247,7 @@ def launch_setup(context, *args, **kwargs):
         arguments=[
             "inspection_cell_controller",
             "--controller-manager", "/controller_manager",
-        ],
+            "--inactive"],
         output="screen",
     )
     # # 8. SECONDARY: Unified 7-DOF Inspection Cell Forward Position Controller (inactive)
@@ -260,17 +261,17 @@ def launch_setup(context, *args, **kwargs):
             "--inactive"
         ],
         output="screen",
-    )    
+    )
 
     # # 9. BACKUP: UR-only controller (inactive)
     ur_controller_spawner = Node(
-        package="controller_manager", 
+        package="controller_manager",
         executable="spawner",
         name="ur_controller_spawner",
         arguments=[
             "ur5e_controller",
             "--controller-manager", "/controller_manager",
-            "--inactive"
+            # "--inactive"
         ],
         output="screen",
     )
@@ -278,12 +279,12 @@ def launch_setup(context, *args, **kwargs):
     # # 10. BACKUP: Turntable-only controller (inactive)
     turntable_trajectory_controller_spawner = Node(
         package="controller_manager",
-        executable="spawner", 
+        executable="spawner",
         name="turntable_trajectory_controller_spawner",
         arguments=[
             "turntable_trajectory_controller",
             "--controller-manager", "/controller_manager",
-            "--inactive"
+            # "--inactive"
         ],
         output="screen",
     )
@@ -291,16 +292,18 @@ def launch_setup(context, *args, **kwargs):
     ur5e_forward_position_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["ur5e_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
+        arguments=["ur5e_forward_position_controller",
+                   "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
-    )   
+    )
 
     turntable_forward_position_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
-        arguments=["turntable_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
+        arguments=["turntable_forward_position_controller",
+                   "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
-    )  
+    )
 
     # ================================================================
     # MOTION PLANNING AND VISUALIZATION
@@ -312,7 +315,7 @@ def launch_setup(context, *args, **kwargs):
             PathJoinSubstitution([
                 FindPackageShare("inspection_cell_moveit_config"),
                 "launch",
-                "move_group.launch.py" 
+                "move_group.launch.py"
             ])
         ]),
         condition=IfCondition(launch_moveit)
@@ -333,7 +336,7 @@ def launch_setup(context, *args, **kwargs):
     # ================================================================
     # RETURN ALL NODES AND EVENT HANDLERS
     # ================================================================
-    
+
     return [
         robot_state_publisher,
         controller_manager,
@@ -346,7 +349,7 @@ def launch_setup(context, *args, **kwargs):
         turntable_trajectory_controller_spawner,
         turntable_forward_position_controller_spawner,
         TimerAction(
-            period=2.0, actions=[moveit_launch]),  
+            period=2.0, actions=[moveit_launch]),
         rviz_launch,
     ]
 
@@ -355,12 +358,12 @@ def generate_launch_description():
     """
     Generate launch description with declared arguments
     """
-    
+
     # ================================================================
-    # DECLARE LAUNCH ARGUMENTS  
+    # DECLARE LAUNCH ARGUMENTS
     # ================================================================
     declared_arguments = []
-    
+
     declared_arguments.append(
         DeclareLaunchArgument(
             "robot_ip",
@@ -370,7 +373,7 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "ur_type", 
+            "ur_type",
             default_value="ur5e",
             description="Type of UR robot"
         )
@@ -385,7 +388,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "headless_mode",
-            default_value="false", 
+            default_value="false",
             description="Run without teach pendant GUI"
         )
     )
@@ -399,14 +402,14 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "launch_moveit",
-            default_value="true", 
+            default_value="true",
             description="Launch MoveIt for motion planning"
         )
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "controller_spawner_timeout",
-            default_value="30", 
+            default_value="30",
             description="Timeout for controller spawning"
         )
     )
@@ -421,7 +424,7 @@ def generate_launch_description():
     # ================================================================
     # RETURN LAUNCH DESCRIPTION
     # ================================================================
-    
+
     return LaunchDescription(
         declared_arguments + [
             OpaqueFunction(function=launch_setup)

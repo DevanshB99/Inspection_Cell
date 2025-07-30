@@ -39,6 +39,7 @@ inspection_cell_controller:
     state_interfaces:
       - position
       - velocity
+    allow_partial_joints_goal: true
 
 ur5e_controller:
   ros__parameters:

@@ -4,11 +4,18 @@ from moveit_configs_utils.launches import generate_move_group_launch
 from ur_moveit_config.launch_common import load_yaml
 from launch_ros.actions import Node
 
+
 def generate_launch_description():
-    moveit_config = MoveItConfigsBuilder("inspection_cell", package_name="inspection_cell_moveit_config").to_moveit_configs()
+    moveit_config = (
+        MoveItConfigsBuilder(
+            "inspection_cell", package_name="inspection_cell_moveit_config")
+        .trajectory_execution(moveit_manage_controllers=True)
+        .to_moveit_configs()
+    )
 
     # Get parameters for the Servo node
-    servo_yaml = load_yaml("inspection_cell_moveit_config", "config/cell_servo.yaml")
+    servo_yaml = load_yaml(
+        "inspection_cell_moveit_config", "config/cell_servo.yaml")
     servo_params = {"moveit_servo": servo_yaml}
     servo_node = Node(
         package="moveit_servo",
@@ -26,5 +33,5 @@ def generate_launch_description():
 
     move_group_launch = generate_move_group_launch(moveit_config)
     all_actions = move_group_launch.entities + [servo_node]
-    
+
     return LaunchDescription(all_actions)
