@@ -6,18 +6,20 @@ controller_manager:
     inspection_cell_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-
     ur5e_controller:
       type: joint_trajectory_controller/JointTrajectoryController
-
 
     turntable_trajectory_controller:
       type: joint_trajectory_controller/JointTrajectoryController
 
-
     inspection_cell_forward_position_controller:
       type: position_controllers/JointGroupPositionController
+ 
+    turntable_forward_position_controller:
+      type: position_controllers/JointGroupPositionController
 
+    ur5e_forward_position_controller:
+      type: position_controllers/JointGroupPositionController        
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -37,6 +39,7 @@ inspection_cell_controller:
     state_interfaces:
       - position
       - velocity
+
 ur5e_controller:
   ros__parameters:
     joints:
@@ -51,6 +54,7 @@ ur5e_controller:
     state_interfaces:
       - position
       - velocity
+
 turntable_trajectory_controller:
   ros__parameters:
     joints:
@@ -60,6 +64,7 @@ turntable_trajectory_controller:
     state_interfaces:
       - position
       - velocity
+
 inspection_cell_forward_position_controller:
   ros__parameters:
     joint:
@@ -71,3 +76,20 @@ inspection_cell_forward_position_controller:
       - wrist_2_joint
       - wrist_3_joint
     interface_name: position  
+
+turntable_forward_position_controller:
+  ros__parameters:
+    joints:
+      - disc_joint
+    interface_name: position
+
+ur5e_forward_position_controller:
+  ros__parameters:
+    joints:  
+      - shoulder_pan_joint      
+      - shoulder_lift_joint       
+      - elbow_joint            
+      - wrist_1_joint          
+      - wrist_2_joint          
+      - wrist_3_joint          
+    interface_name: position     

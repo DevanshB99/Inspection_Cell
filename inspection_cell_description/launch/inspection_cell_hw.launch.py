@@ -288,6 +288,20 @@ def launch_setup(context, *args, **kwargs):
         output="screen",
     )
 
+    ur5e_forward_position_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["ur5e_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
+        output="screen",
+    )   
+
+    turntable_forward_position_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["turntable_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
+        output="screen",
+    )  
+
     # ================================================================
     # MOTION PLANNING AND VISUALIZATION
     # ================================================================
@@ -327,10 +341,12 @@ def launch_setup(context, *args, **kwargs):
         joint_state_broadcaster_spawner,
         inspection_cell_controller_spawner,
         inspection_cell_forward_position_controller_spawner,
-        TimerAction(
-            period=2.0, actions=[moveit_launch]),
         ur_controller_spawner,
-        turntable_trajectory_controller_spawner,    
+        ur5e_forward_position_controller_spawner,
+        turntable_trajectory_controller_spawner,
+        turntable_forward_position_controller_spawner,
+        TimerAction(
+            period=2.0, actions=[moveit_launch]),  
         rviz_launch,
     ]
 

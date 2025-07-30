@@ -150,12 +150,26 @@ def generate_launch_description():
         output="screen",
     )
 
-    forward_position_controller_spawner = Node(
+    inspection_cell_forward_position_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["inspection_cell_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
     )
+
+    ur5e_forward_position_controller = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["ur5e_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
+        output="screen",
+    )   
+
+    turntable_forward_position_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=["turntable_forward_position_controller", "--controller-manager", "/controller_manager", "--inactive"],
+        output="screen",
+    )   
 
     moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -181,7 +195,9 @@ def generate_launch_description():
             ur5e_controller,
             turntable_controller,
             ur5e_to_turntable_controller,
-            forward_position_controller_spawner,
+            inspection_cell_forward_position_controller,
+            ur5e_forward_position_controller,
+            turntable_forward_position_controller_spawner,
             moveit_launch,
             rviz_launch,
         ]
