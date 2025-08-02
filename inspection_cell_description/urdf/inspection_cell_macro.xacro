@@ -556,7 +556,7 @@
     </joint>
 
     <joint name="${tf_prefix}ur5e_mount_to_table" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="-1.4732 -0.6096 0" rpy="0 0 0"/>
       <parent link="${tf_prefix}ur5e_mount_link"/>
       <child link="${tf_prefix}table_link"/>
     </joint>
@@ -565,7 +565,7 @@
     <joint name="${tf_prefix}base_to_ur_mount" type="fixed">
       <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}ur5e_mount_link"/>
-      <origin xyz="0.97035 0 0" rpy="0 0 0"/>
+      <origin xyz="0.9906 0 0" rpy="0 0 0"/>
     </joint>
 
     <!-- UR5e Base - Mounted on mount block -->
