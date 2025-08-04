@@ -3,6 +3,7 @@ from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_move_group_launch
 from ur_moveit_config.launch_common import load_yaml
 from launch_ros.actions import Node
+from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
@@ -10,6 +11,8 @@ def generate_launch_description():
         MoveItConfigsBuilder(
             "inspection_cell", package_name="inspection_cell_moveit_config")
         .trajectory_execution(moveit_manage_controllers=True)
+        .moveit_cpp(file_path="config/motion_planning_config.yaml")
+        .robot_description(file_path="config/inspection_cell.urdf.xacro")
         .to_moveit_configs()
     )
 
@@ -31,7 +34,16 @@ def generate_launch_description():
         output="screen",
     )
 
+    moveit_py_node = Node(
+        name="moveit_py",
+        package="viewpoint_generation",
+        executable="viewpoint_traversal_node",
+        output="both",
+        parameters=[moveit_config.to_dict()],
+    )
+
     move_group_launch = generate_move_group_launch(moveit_config)
     all_actions = move_group_launch.entities + [servo_node]
+    all_actions = [servo_node, moveit_py_node]
 
     return LaunchDescription(all_actions)

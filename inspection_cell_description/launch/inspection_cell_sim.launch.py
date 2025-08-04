@@ -126,13 +126,8 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[controllers_yaml],
         output="screen",
-<<<<<<< HEAD
-        remappings=[("/controller_manager/robot_description", "/robot_description")], 
-        arguments=["--log-level", "debug"],      
-=======
         remappings=[
             ("/controller_manager/robot_description", "/robot_description")],
->>>>>>> a368931 (Chnages made to the ros2_controller.yaml, moveit_controler.yaml and sim.launch.py and hw.launch.py to handle switching controllers at run-time.)
     )
 
     # Controller Spawners
@@ -197,7 +192,8 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("inspection_cell_moveit_config"),
                 "launch",
-                "move_group.launch.py"
+                "moveit_py.launch.py"
+                # "move_group.launch.py"  # Use the move_group launch file
             ])
         )
     )
