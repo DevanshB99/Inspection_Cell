@@ -1,3 +1,4 @@
+import xacro
 from launch import LaunchDescription
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_move_group_launch
@@ -7,12 +8,25 @@ from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
+
+    planning_scene_monitor_parameters = {
+        "publish_planning_scene": True,
+        "publish_geometry_updates": True,
+        "publish_state_updates": True,
+        "publish_transforms_updates": True,
+        "publish_robot_description": True,
+        "publish_robot_description_semantic": True,
+    }
+
     moveit_config = (
         MoveItConfigsBuilder(
             "inspection_cell", package_name="inspection_cell_moveit_config")
         .trajectory_execution(moveit_manage_controllers=True)
+        .planning_scene_monitor(planning_scene_monitor_parameters)
         .moveit_cpp(file_path="config/motion_planning_config.yaml")
-        .robot_description(file_path="config/inspection_cell.urdf.xacro")
+        .robot_description("config/inspection_cell.urdf.xacro")
+        .robot_description_semantic(
+            file_path="config/inspection_cell.srdf")
         .to_moveit_configs()
     )
 
@@ -24,7 +38,7 @@ def generate_launch_description():
         package="moveit_servo",
         executable="servo_node",
         name="servo_node",
-        namespace="inspection_cell",
+        # namespace="inspection_cell",
         parameters=[
             servo_params,
             moveit_config.robot_description,
@@ -39,11 +53,10 @@ def generate_launch_description():
         package="viewpoint_generation",
         executable="viewpoint_traversal_node",
         output="both",
-        parameters=[moveit_config.to_dict()],
+        parameters=[
+            moveit_config.to_dict()],
     )
 
-    move_group_launch = generate_move_group_launch(moveit_config)
-    all_actions = move_group_launch.entities + [servo_node]
-    all_actions = [servo_node, moveit_py_node]
+    all_actions = [moveit_py_node]
 
     return LaunchDescription(all_actions)

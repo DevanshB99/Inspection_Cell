@@ -21,7 +21,7 @@ def generate_launch_description():
         package="moveit_servo",
         executable="servo_node",
         name="servo_node",
-        namespace="inspection_cell",
+        # namespace="inspection_cell",
         parameters=[
             servo_params,
             moveit_config.robot_description,
