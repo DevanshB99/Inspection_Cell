@@ -55,12 +55,12 @@ def generate_launch_description():
     output_recipe_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources",
          "rtde_output_recipe.txt"]
+    )
 
-
-    robot_description_content=command([
-        pathjoinsubstitution([findexecutable(name="xacro")]),
+    robot_description_content = Command([
+        PathJoinSubstitution([FindExecutable(name="xacro")]),
         " ",
-        pathjoinsubstitution([findpackageshare(
+        PathJoinSubstitution([FindPackageShare(
             "inspection_cell_description"), "urdf", "inspection_cell.urdf.xacro"]),
         " ",
         "name:=",
@@ -102,17 +102,17 @@ def generate_launch_description():
         "initial_positions_file:=",
         initial_positions_file_path,
     ])
-    robot_description={"robot_description": parametervalue(
+    robot_description = {"robot_description": ParameterValue(
         robot_description_content, value_type=str)}
 
-    # # controller config
-    controllers_yaml=pathjoinsubstitution([
-        findpackageshare(
+    # # Controller Config
+    controllers_yaml = PathJoinSubstitution([
+        FindPackageShare(
             "inspection_cell_description"), "config", "ros2_controllers.yaml"
     ])
 
-    # robot state publisher
-    robot_state_publisher_node=node(
+    # Robot State Publisher
+    robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         parameters=[robot_description],
@@ -121,7 +121,7 @@ def generate_launch_description():
     )
 
     # ros2_control Node
-    control_node=Node(
+    control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
         parameters=[controllers_yaml],
@@ -131,7 +131,7 @@ def generate_launch_description():
     )
 
     # Controller Spawners
-    joint_state_broadcaster=Node(
+    joint_state_broadcaster = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["joint_state_broadcaster",
@@ -139,7 +139,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    ur5e_controller=Node(
+    ur5e_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["ur5e_controller",
@@ -147,7 +147,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    turntable_controller=Node(
+    turntable_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["turntable_trajectory_controller",
@@ -155,7 +155,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    ur5e_to_turntable_controller=Node(
+    ur5e_to_turntable_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["inspection_cell_controller",
@@ -163,7 +163,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    inspection_cell_forward_position_controller=Node(
+    inspection_cell_forward_position_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["inspection_cell_forward_position_controller",
@@ -171,7 +171,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    ur5e_forward_position_controller=Node(
+    ur5e_forward_position_controller = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["ur5e_forward_position_controller",
@@ -179,7 +179,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    turntable_forward_position_controller_spawner=Node(
+    turntable_forward_position_controller_spawner = Node(
         package="controller_manager",
         executable="spawner",
         arguments=["turntable_forward_position_controller",
@@ -187,7 +187,7 @@ def generate_launch_description():
         output="screen",
     )
 
-    moveit_launch=IncludeLaunchDescription(
+    moveit_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([
                 FindPackageShare("inspection_cell_moveit_config"),
@@ -198,7 +198,7 @@ def generate_launch_description():
         )
     )
 
-    rviz_launch=Node(
+    rviz_launch = Node(
         package='rviz2',
         executable='rviz2',
         output='screen'
