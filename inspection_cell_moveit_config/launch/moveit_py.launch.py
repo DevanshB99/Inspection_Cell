@@ -55,6 +55,7 @@ def generate_launch_description():
         output="both",
         parameters=[
             moveit_config.to_dict()],
+        prefix="bash -c 'sleep 5; $0 $@' ",  # Longer delay for safety
     )
 
     all_actions = [moveit_py_node]
