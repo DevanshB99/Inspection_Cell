@@ -136,7 +136,7 @@
         </geometry>
       </visual>
       <collision>
-        <origin xyz="-1.2192 -0.762 -0.4515" rpy="0 0 0"/>
+        <origin xyz="1.2192 0.762 -0.4515" rpy="0 0 0"/>
         <geometry>
           <box size="2.4384 1.524 0.903"/>
         </geometry>
