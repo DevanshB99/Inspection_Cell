@@ -10,6 +10,7 @@ from ur_moveit_config.launch_common import load_yaml
 
 
 def generate_launch_description():
+    # Launch arguments
     declared_arguments = [
         DeclareLaunchArgument("ur_type", default_value="ur5e"),
         DeclareLaunchArgument("use_fake_hardware", default_value="true"),
@@ -124,7 +125,7 @@ def generate_launch_description():
     control_node = Node(
         package="controller_manager",
         executable="ros2_control_node",
-        parameters=[controllers_yaml],
+        parameters=[controllers_yaml, robot_description],
         output="screen",
         remappings=[
             ("/controller_manager/robot_description", "/robot_description")],
@@ -159,7 +160,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["inspection_cell_controller",
-                   "--controller-manager", "/controller_manager", "--inactive"],
+                   "--controller-manager", "/controller_manager"],
         output="screen",
     )
 
@@ -175,7 +176,7 @@ def generate_launch_description():
         package="controller_manager",
         executable="spawner",
         arguments=["ur5e_forward_position_controller",
-                   "--controller-manager", "/controller_manager"],
+                   "--controller-manager", "/controller_manager", "--inactive"],
         output="screen",
     )
 
@@ -192,8 +193,7 @@ def generate_launch_description():
             PathJoinSubstitution([
                 FindPackageShare("inspection_cell_moveit_config"),
                 "launch",
-                "moveit_py.launch.py"
-                # "move_group.launch.py"  # Use the move_group launch file
+                "move_group.launch.py"  # Use the move_group + moveit_py node
             ])
         )
     )
