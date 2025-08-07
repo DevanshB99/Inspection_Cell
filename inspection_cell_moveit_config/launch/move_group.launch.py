@@ -1,8 +1,10 @@
+import time
 from launch import LaunchDescription
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_move_group_launch
 from ur_moveit_config.launch_common import load_yaml
 from launch_ros.actions import Node
+from launch.actions import TimerAction
 
 
 def generate_launch_description():
@@ -12,7 +14,7 @@ def generate_launch_description():
             package_name="inspection_cell_moveit_config")
         .robot_description_semantic(file_path="config/inspection_cell.srdf")
         .robot_description_kinematics(file_path="config/kinematics.yaml")
-        .moveit_cpp(file_path="config/motion_planning_config.yaml")
+        .moveit_cpp(file_path="config/motion_planning.yaml")
         .joint_limits(file_path="config/joint_limits.yaml")
         .planning_pipelines(default_planning_pipeline="ompl", pipelines=["ompl", "chomp", "pilz_industrial_motion_planner"])
         .trajectory_execution(moveit_manage_controllers=True)
@@ -34,8 +36,6 @@ def generate_launch_description():
         executable="viewpoint_traversal_node",
         output="both",
         parameters=[moveit_config.to_dict()],
-        # Wait for controllers to be ready
-        prefix="bash -c 'sleep 5; $0 $@' ",
     )
 
     # Get parameters for the Servo node
@@ -56,6 +56,4 @@ def generate_launch_description():
         output="screen",
     )
 
-    all_actions = [move_group_launch, moveit_py_node, servo_node]
-
-    return LaunchDescription(all_actions)
+    return LaunchDescription([move_group_launch, moveit_py_node, servo_node])

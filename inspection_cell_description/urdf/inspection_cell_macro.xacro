@@ -743,7 +743,7 @@
     <joint name="${tf_prefix}eoat_camera_joint" type="fixed">
       <parent link="${tf_prefix}eoat_base_link"/>
       <child link="${tf_prefix}eoat_camera_link"/>
-      <origin xyz="0 0 0.125" rpy="${radians(90)} ${radians(180)} ${radians(-90)}"/>
+      <origin xyz="0 0 0.125" rpy="${radians(90)} ${radians(0)} ${radians(-90)}"/>
     </joint>
 
     <!-- ================================================================ -->
