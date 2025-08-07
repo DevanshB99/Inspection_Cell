@@ -199,10 +199,16 @@ def generate_launch_description():
         )
     )
 
+    rviz_config = PathJoinSubstitution([
+        FindPackageShare(
+            'inspection_cell_description'), "rviz", "view_robot.rviz"
+    ])
+
     rviz_launch = Node(
-        package='rviz2',
-        executable='rviz2',
-        output='screen'
+        package="rviz2",
+        executable="rviz2",
+        arguments=["-d", rviz_config],
+        output="screen"
     )
 
     return LaunchDescription(
