@@ -30,13 +30,13 @@ def generate_launch_description():
     move_group_launch = generate_move_group_launch(moveit_config)
 
     # Your MoveItPy Viewpoint Traversal Node
-    moveit_py_node = Node(
-        name="viewpoint_traversal_node",
-        package="viewpoint_generation",
-        executable="viewpoint_traversal_node",
-        output="both",
-        parameters=[moveit_config.to_dict()],
-    )
+    # moveit_py_node = Node(
+    #     name="viewpoint_traversal_node",
+    #     package="viewpoint_generation",
+    #     executable="viewpoint_traversal_node",
+    #     output="both",
+    #     parameters=[moveit_config.to_dict()],
+    # )
 
     # Get parameters for the Servo node
     servo_yaml = load_yaml(
@@ -56,4 +56,4 @@ def generate_launch_description():
         output="screen",
     )
 
-    return LaunchDescription([move_group_launch, moveit_py_node, servo_node])
+    return LaunchDescription([move_group_launch, servo_node])
