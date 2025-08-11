@@ -814,7 +814,7 @@
   <joint name="base_to_ur_mount" type="fixed">
     <parent link="turntable_base_link"/>
     <child link="ur5e_mount_link"/>
-    <origin rpy="0 0 0" xyz="0.9906 0 0"/>
+    <origin rpy="0 0 0" xyz="0.75 0 0"/>
   </joint>
   <!-- UR5e Base - Mounted on mount block -->
   <joint name="mount_to_ur" type="fixed">
@@ -929,7 +929,7 @@
   <joint name="eoat_camera_joint" type="fixed">
     <parent link="eoat_base_link"/>
     <child link="eoat_camera_link"/>
-    <origin rpy="1.5707963267948966 3.141592653589793 -1.5707963267948966" xyz="0 0 0.125"/>
+    <origin rpy="1.5707963267948966 0 -1.5707963267948966" xyz="0 0 0.125"/>
   </joint>
   <!-- ================================================================ -->
   <!-- INDUSTRIAL COMPATIBILITY FRAMES -->

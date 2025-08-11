@@ -23,7 +23,8 @@ def generate_launch_description():
             "inspection_cell", package_name="inspection_cell_moveit_config")
         .trajectory_execution(moveit_manage_controllers=True)
         .planning_scene_monitor(planning_scene_monitor_parameters)
-        .moveit_cpp(file_path="config/motion_planning_config.yaml")
+        # .moveit_cpp(file_path="config/motion_planning_config.yaml")
+        .moveit_cpp(file_path="config/moveit_cpp.yaml")
         .robot_description("config/inspection_cell.urdf.xacro")
         .robot_description_semantic(
             file_path="config/inspection_cell.srdf")
