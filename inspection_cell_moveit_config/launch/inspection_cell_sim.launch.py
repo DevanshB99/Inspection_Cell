@@ -4,15 +4,16 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration
+from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.parameter_descriptions import ParameterValue
 from ur_moveit_config.launch_common import load_yaml
-from launch.actions import TimerAction
+from launch_ros.substitutions import FindPackageShare
 
 
-def generate_launch_description():
+def generate_launch_description(context, *args, **kwargs):
     # Launch arguments
     declared_arguments = [
+        DeclareLaunchArgument("sim", default_value="false",), 
         DeclareLaunchArgument("ur_type", default_value="ur5e"),
         DeclareLaunchArgument("use_fake_hardware", default_value="true"),
         DeclareLaunchArgument("mock_sensor_commands", default_value="false",
@@ -20,7 +21,7 @@ def generate_launch_description():
                               "Used only if 'use_fake_hardware' parameter is true."),
         DeclareLaunchArgument("headless_mode", default_value="false",
                               description="Run in headless mode (without GUI)."),
-        DeclareLaunchArgument("robot_ip", default_value="0.0.0.0",
+        DeclareLaunchArgument("robot_ip", default_value="192.168.1.102",
                               description="IP address of the robot."),
         DeclareLaunchArgument("safety_limits", default_value="true",
                               description="Enable safety limits controller."),
@@ -38,26 +39,67 @@ def generate_launch_description():
     safety_limits = LaunchConfiguration("safety_limits")
     safety_pos_margin = LaunchConfiguration("safety_pos_margin")
     safety_k_position = LaunchConfiguration("safety_k_position")
+    launch_rviz = LaunchConfiguration("launch_rviz")
+    launch_moveit = LaunchConfiguration("launch_moveit")
+    use_tool_communication = LaunchConfiguration("use_tool_communication")
 
-    # Resolve the initial_positions_file path
+    # Determining simulation mode v.s physical hardware mode
+
+    use_fake_hardware = use_fake_hardware.perform(context)
+    is_sim = use_fake_hardware == "true"
+
+    # Initial_positions_file path
     initial_positions_file_path = PathJoinSubstitution(
         [FindPackageShare("inspection_cell_description"),
          "config", "initial_positions.yaml"]
     )
 
+    # Controller Config
+    controllers_yaml = PathJoinSubstitution([
+        FindPackageShare(
+            "inspection_cell_description"), "config", "ros2_controllers.yaml"
+    ])
+
     # UR Script and recipe files paths
+    ur_update_rate_config = PathJoinSubstitution([
+        FindPackageShare("ur_robot_driver"),
+        "config", "ur5e_update_rate.yaml"
+    ]) if not is_sim else None
+
     script_filename = PathJoinSubstitution(
         [FindPackageShare("ur_client_library"), "resources",
          "external_control.urscript"]
     )
+    
     input_recipe_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources",
          "rtde_input_recipe.txt"]
     )
+    
     output_recipe_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources",
          "rtde_output_recipe.txt"]
     )
+
+    joint_limits_params = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "config", "joint_limits.yaml"
+    ])
+
+    kinematics_params = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "config", "kinematics.yaml"
+    ])
+
+    physical_params = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "config", "physical_parameters.yaml"
+    ])
+    
+    visual_params = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "config", "visual_parameters.yaml"
+    ])
 
     robot_description_content = Command([
         PathJoinSubstitution([FindExecutable(name="xacro")]),
@@ -104,14 +146,42 @@ def generate_launch_description():
         "initial_positions_file:=",
         initial_positions_file_path,
     ])
+
+    if not is_sim:
+        robot_description_content.extend([" ","use_tool_communication:=", use_tool_communication,
+                                            " ", "joint_limit_params:=", PathJoinSubstitution([
+                                                FindPackageShare("inspection_cell_description"),
+                                                "config", "joint_limits.yaml"
+                                            ]),
+                                            " ",
+                                            "kinematics_params:=",
+                                            PathJoinSubstitution([
+                                                FindPackageShare("inspection_cell_description"),
+                                                "config", "my_robot_calibration.yaml"
+                                            ]),
+                                            " ",
+                                            "physical_params:=",
+                                            PathJoinSubstitution([
+                                                FindPackageShare("inspection_cell_description"),
+                                                "config", "physical_parameters.yaml"
+                                            ]),
+                                            " ",
+                                            "visual_params:=",
+                                            PathJoinSubstitution([
+                                                FindPackageShare("inspection_cell_description"),
+                                                "config", "visual_parameters.yaml"
+                                            ]),
+                                        ])
+
+
+
+
+
+
     robot_description = {"robot_description": ParameterValue(
         robot_description_content, value_type=str)}
 
-    # # Controller Config
-    controllers_yaml = PathJoinSubstitution([
-        FindPackageShare(
-            "inspection_cell_description"), "config", "ros2_controllers.yaml"
-    ])
+
 
     # Robot State Publisher
     robot_state_publisher_node = Node(
