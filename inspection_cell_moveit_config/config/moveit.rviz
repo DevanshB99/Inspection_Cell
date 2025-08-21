@@ -9,8 +9,9 @@ Panels:
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
         - /Pose1
+        - /Axes1
       Splitter Ratio: 0.5
-    Tree Height: 462
+    Tree Height: 554
   - Class: rviz_common/Help
     Name: Help
   - Class: rviz_common/Views
@@ -355,6 +356,13 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /viewpoint_generation/viewpoint
       Value: true
+    - Class: rviz_default_plugins/Axes
+      Enabled: true
+      Length: 0.20000000298023224
+      Name: Axes
+      Radius: 0.019999999552965164
+      Reference Frame: eoat_camera_link
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -373,25 +381,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.5770864486694336
+      Distance: 1.5838203430175781
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.07949329912662506
-        Y: 0.08590783178806305
-        Z: 0.20361018180847168
+        X: 0.2453797310590744
+        Y: 0.0349343866109848
+        Z: 0.14998015761375427
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.37999990582466125
+      Pitch: 0.5849996209144592
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 4.0901923179626465
+      Yaw: 5.390196323394775
     Saved: ~
 Window Geometry:
   Displays:
@@ -400,14 +408,14 @@ Window Geometry:
   Help:
     collapsed: false
   Hide Left Dock: true
-  Hide Right Dock: false
+  Hide Right Dock: true
   MotionPlanning:
-    collapsed: false
+    collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002b400000355fc0200000004fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073000000003b00000209000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000024a00000146000000a000ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000003b000003550000016900ffffff0000037a0000035500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002b400000355fc0200000004fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073000000003b00000265000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a0056006900650077007300000002a6000000ea000000a000ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff000005490000035500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: true
   Width: 1353
-  X: 1207
-  Y: 147
+  X: 71
+  Y: 48
