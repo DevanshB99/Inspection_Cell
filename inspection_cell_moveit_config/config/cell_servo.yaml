@@ -23,12 +23,10 @@ low_latency_mode: false  # Set this to true to publish as soon as an incoming Tw
 # What type of topic does your robot driver expect?
 # Currently supported are std_msgs/Float64MultiArray or trajectory_msgs/JointTrajectory
 command_out_type: std_msgs/Float64MultiArray
-# command_out_type: trajectory_msgs/JointTrajectory  # If your robot driver expects JointTrajectory messages, set this to "trajectory_msgs/JointTrajectory"
 
 # What to publish? Can save some bandwidth as most robots only require positions or velocities
 publish_joint_positions: true
 publish_joint_velocities: false
-# publish_joint_velocities: true
 publish_joint_accelerations: false
 
 ## Plugins for smoothing outgoing commands
@@ -46,7 +44,9 @@ low_pass_filter_coeff: 10.0  # Larger --> trust the filtered data more, trust th
 
 ## MoveIt properties
 move_group_name: ur5e # Often 'manipulator' or 'arm'
-planning_frame: base_link # The MoveIt planning frame. Often 'base_link' or 'world'
+# move_group_name: disc_to_ur5e
+planning_frame: ur_base_link # The MoveIt planning frame. Often 'base_link' or 'world'
+# planning_frame: object_frame
 
 ## Other frames
 ee_frame_name: eoat_camera_link # The name of the end effector link, used to return the EE pose
@@ -59,8 +59,8 @@ incoming_command_timeout: 0.1  # Stop servoing if X seconds elapse without a new
 num_outgoing_halt_msgs_to_publish: 4
 
 ## Configure handling of singularities and joint limits
-lower_singularity_threshold: 10.0  # Start decelerating when the condition number hits this (close to singularity)
-hard_stop_singularity_threshold: 30.0  # Stop when the condition number hits this
+lower_singularity_threshold: 1000000000000000.0  # Start decelerating when the condition number hits this (close to singularity)
+hard_stop_singularity_threshold: 30000000000000000000000.0  # Stop when the condition number hits this
 
 # added as a buffer to joint limits [radians]. If moving quickly, make this larger.
 joint_limit_margins: [0.1]
@@ -71,10 +71,10 @@ joint_command_in_topic: ~/delta_joint_cmds  # Topic for incoming joint angle com
 joint_topic: /joint_states
 status_topic: ~/status  # Publish status to this topic
 command_out_topic: /ur5e_forward_position_controller/commands  # Publish outgoing commands here
-# command_out_topic: /ur5e_controller/joint_trajectory
+# command_out_topic: /inspection_cell_forward_position_controller/commands  # Publish outgoing commands here
 
 ## Collision checking for the entire robot body
-check_collisions: false # Check collisions?
+check_collisions: true # Check collisions?
 collision_check_rate: 5.0  # [Hz] Collision-checking can easily bog down a CPU if done too often.
 # Two collision check algorithms are available: "threshold_distance" begins slowing down when
 # nearer than a specified distance. Good if you want to tune collision thresholds manually.

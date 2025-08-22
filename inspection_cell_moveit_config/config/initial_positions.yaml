@@ -1,7 +1,7 @@
 # Default initial positions for inspection_cell's ros2_control fake system
 
 initial_positions:
-  shoulder_pan_joint: 3.14
+  shoulder_pan_joint: 0 # 3.14
   turntable_disc_joint: 0.0
   shoulder_lift_joint: -1.8398
   elbow_joint: -1.8224
