@@ -6,10 +6,40 @@ from launch_ros.actions import Node
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.parameter_descriptions import ParameterValue
 from ur_moveit_config.launch_common import load_yaml
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import TimerAction, OpaqueFunction
 
-def launch_setup(context, *args, **kwargs):
+
+def generate_launch_description():
+    declared_arguments = [
+        DeclareLaunchArgument("cell", default_value="alpha",
+                              choices=["alpha", "beta"]),
+        DeclareLaunchArgument("sim", default_value="false",),
+        DeclareLaunchArgument("ur_type", default_value="ur5e"),
+        DeclareLaunchArgument("use_fake_hardware", default_value="true"),
+        DeclareLaunchArgument("mock_sensor_commands", default_value="false",
+                              description="Enable fake command interfaces for sensors used for simple simulations. "
+                              "Used only if 'use_fake_hardware' parameter is true."),
+        DeclareLaunchArgument("headless_mode", default_value="false",
+                              description="Run in headless mode (without GUI)."),
+        DeclareLaunchArgument("robot_ip", default_value="192.168.1.102",
+                              description="IP address of the robot."),
+        DeclareLaunchArgument("safety_limits", default_value="true",
+                              description="Enable safety limits controller."),
+        DeclareLaunchArgument("safety_pos_margin", default_value="0.15",
+                              description="Safety margin for position limits."),
+        DeclareLaunchArgument("safety_k_position", default_value="20",
+                              description="k-position factor in safety controller."),
+        DeclareLaunchArgument("use_tool_communication", default_value="false",
+                              description="Enable tool communication for UR robots."),
+        DeclareLaunchArgument("launch_rviz", default_value="true",
+                              description="Launch RViz for visualization."),
+        DeclareLaunchArgument("launch_moveit", default_value="true",
+                              description="Launch MoveIt for motion planning."),
+    ]
+
+    cell = LaunchConfiguration("cell")
+    sim = LaunchConfiguration("sim")
     ur_type = LaunchConfiguration("ur_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
@@ -22,14 +52,10 @@ def launch_setup(context, *args, **kwargs):
     launch_moveit = LaunchConfiguration("launch_moveit")
     use_tool_communication = LaunchConfiguration("use_tool_communication")
 
-    # Determining simulation mode v.s physical hardware mode
-    use_fake_hardware_value = use_fake_hardware.perform(context)
-    is_sim = use_fake_hardware_value == "true"
-
     # Initial_positions_file path
     initial_positions_file_path = PathJoinSubstitution(
         [FindPackageShare("inspection_cell_description"),
-         "config", "initial_positions.yaml"]
+         "config", cell, "initial_positions.yaml"]
     )
 
     # Controller Config
@@ -42,22 +68,29 @@ def launch_setup(context, *args, **kwargs):
     ur_update_rate_config = PathJoinSubstitution([
         FindPackageShare("ur_robot_driver"),
         "config", "ur5e_update_rate.yaml"
-    ]) if not is_sim else None
+    ])
 
     script_filename = PathJoinSubstitution(
         [FindPackageShare("ur_client_library"), "resources",
          "external_control.urscript"]
     )
-    
+
     input_recipe_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources",
          "rtde_input_recipe.txt"]
     )
-    
+
     output_recipe_filename = PathJoinSubstitution(
         [FindPackageShare("ur_robot_driver"), "resources",
          "rtde_output_recipe.txt"]
     )
+
+    # If cell is alpha, use the alpha specific urdf, initial positions, and joint limits
+    urdf_file = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "urdf",
+        "inspection_cell.urdf.xacro",
+    ])
 
     # Robot description command
     robot_description_command = [
@@ -68,6 +101,9 @@ def launch_setup(context, *args, **kwargs):
         " ",
         "name:=",
         "inspection_cell",
+        " ",
+        "cell:=",
+        cell,
         " ",
         "ur_type:=",
         ur_type,
@@ -107,32 +143,31 @@ def launch_setup(context, *args, **kwargs):
     ]
 
     # Add hardware-specific parameters if not in simulation
-    if not is_sim:
-        robot_description_command.extend([
-            " ",
-            "use_tool_communication:=", 
-            use_tool_communication,
-            " ", 
-            "joint_limit_params:=", 
-            PathJoinSubstitution([
-                FindPackageShare("inspection_cell_description"),
-                "config", "joint_limits.yaml"]),
-            " ",
-            "kinematics_params:=",
-            PathJoinSubstitution([
-                FindPackageShare("inspection_cell_description"),
-                "config", "my_robot_calibration.yaml"]),
-            " ",
-            "physical_params:=",
-            PathJoinSubstitution([
-                FindPackageShare("inspection_cell_description"),
-                "config", "physical_parameters.yaml"]),
-            " ",
-            "visual_params:=",
-            PathJoinSubstitution([
-                FindPackageShare("inspection_cell_description"),
-                "config", "visual_parameters.yaml"]),
-        ])
+    robot_description_command.extend([
+        " ",
+        "use_tool_communication:=",
+        use_tool_communication,
+        " ",
+        "joint_limit_params:=",
+        PathJoinSubstitution([
+            FindPackageShare("inspection_cell_description"),
+            "config", cell, "joint_limits.yaml"]),
+        " ",
+        "kinematics_params:=",
+        PathJoinSubstitution([
+            FindPackageShare("inspection_cell_description"),
+            "config", cell, "my_robot_calibration.yaml"]),
+        " ",
+        "physical_params:=",
+        PathJoinSubstitution([
+            FindPackageShare("inspection_cell_description"),
+            "config", cell, "physical_parameters.yaml"]),
+        " ",
+        "visual_params:=",
+        PathJoinSubstitution([
+            FindPackageShare("inspection_cell_description"),
+            "config", cell, "visual_parameters.yaml"]),
+    ])
 
     robot_description_content = Command(robot_description_command)
     robot_description = {"robot_description": ParameterValue(
@@ -148,7 +183,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     controller_params = [controllers_yaml, robot_description]
-    if not is_sim:
+    if not sim:
         # Load UR update rate configuration if not in simulation mode
         controller_params.insert(0, ur_update_rate_config)
 
@@ -165,16 +200,14 @@ def launch_setup(context, *args, **kwargs):
     # ================================================================
     # HARDWARE-SPECIFIC NODE
     # ================================================================
-    hardware_nodes = []
-    if not is_sim:
-        ur_dashboard_client = Node(
-            package="ur_robot_driver",
-            executable="dashboard_client",
-            name="ur_dashboard_client",
-            parameters=[{"robot_ip": robot_ip}],
-            output="screen",
-        )
-        hardware_nodes.append(ur_dashboard_client)
+    ur_dashboard_client = Node(
+        package="ur_robot_driver",
+        executable="dashboard_client",
+        name="ur_dashboard_client",
+        parameters=[{"robot_ip": robot_ip}],
+        output="screen",
+        condition=UnlessCondition(sim)
+    )
 
     joint_state_broadcaster = Node(
         package="controller_manager",
@@ -185,6 +218,7 @@ def launch_setup(context, *args, **kwargs):
             "--controller-manager", "/controller_manager",
         ],
         output="screen",
+        condition=IfCondition(sim)
     )
 
     ur5e_controller = Node(
@@ -245,31 +279,18 @@ def launch_setup(context, *args, **kwargs):
         condition=IfCondition(launch_moveit)
     )
 
-    if is_sim:
-        rviz_config = PathJoinSubstitution([
-            FindPackageShare('inspection_cell_description'),
-            "rviz", "view_robot.rviz"
-        ])
-        
-        rviz_launch = Node(
-            package="rviz2",
-            executable="rviz2",
-            arguments=["-d", rviz_config],
-            output="screen",
-            condition=IfCondition(launch_rviz)
-        )
-    else:
-        rviz_launch = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([
-                PathJoinSubstitution([
-                    FindPackageShare("inspection_cell_moveit_config"),
-                    "launch", "moveit_rviz.launch.py"
-                ])
-            ]),
-            condition=IfCondition(launch_rviz)
-        )
+    rviz_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("inspection_cell_moveit_config"),
+                "launch", "moveit_rviz.launch.py"
+            ])
+        ]),
+        condition=IfCondition(launch_rviz)
+    )
 
-    nodes = [
+    return LaunchDescription([
+        ur_dashboard_client,
         robot_state_publisher_node,
         control_node,
         joint_state_broadcaster,
@@ -279,41 +300,4 @@ def launch_setup(context, *args, **kwargs):
         inspection_cell_forward_position_controller,
         ur5e_forward_position_controller,
         turntable_forward_position_controller,
-    ]
-    # Add hardware-specific nodes
-    nodes.extend(hardware_nodes)
-    if is_sim:
-        nodes.append(moveit_launch)
-    else:
-        nodes.append(TimerAction(period=2.0, actions=[moveit_launch]))
-    nodes.append(rviz_launch)
-    return nodes
-
-def generate_launch_description():
-    declared_arguments = [
-        DeclareLaunchArgument("sim", default_value="false",), 
-        DeclareLaunchArgument("ur_type", default_value="ur5e"),
-        DeclareLaunchArgument("use_fake_hardware", default_value="true"),
-        DeclareLaunchArgument("mock_sensor_commands", default_value="false",
-                              description="Enable fake command interfaces for sensors used for simple simulations. "
-                              "Used only if 'use_fake_hardware' parameter is true."),
-        DeclareLaunchArgument("headless_mode", default_value="false",
-                              description="Run in headless mode (without GUI)."),
-        DeclareLaunchArgument("robot_ip", default_value="192.168.1.102",
-                              description="IP address of the robot."),
-        DeclareLaunchArgument("safety_limits", default_value="true",
-                              description="Enable safety limits controller."),
-        DeclareLaunchArgument("safety_pos_margin", default_value="0.15",
-                              description="Safety margin for position limits."),
-        DeclareLaunchArgument("safety_k_position", default_value="20",
-                              description="k-position factor in safety controller."),
-        DeclareLaunchArgument("use_tool_communication", default_value="false",
-                              description="Enable tool communication for UR robots."),
-        DeclareLaunchArgument("launch_rviz", default_value="true",
-                              description="Launch RViz for visualization."),
-        DeclareLaunchArgument("launch_moveit", default_value="true",
-                              description="Launch MoveIt for motion planning."),                      
-    ]
-    return LaunchDescription(
-        declared_arguments + [OpaqueFunction(function=launch_setup)]
-    )
+    ])

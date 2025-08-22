@@ -14,21 +14,30 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 
+
 def generate_launch_description():
     # -------------------------------
     # Declare launch arguments
     # -------------------------------
     declared_arguments = [
-        DeclareLaunchArgument("ur_type", default_value="ur5e", description="Type of UR robot"),
-        DeclareLaunchArgument("use_fake_hardware", default_value="true", description="Sim mode"),
-        DeclareLaunchArgument("mock_sensor_commands", default_value="false", description="Mock sensor commands"),
-        DeclareLaunchArgument("headless_mode", default_value="false", description="Disable GUI"),
-        DeclareLaunchArgument("launch_rviz", default_value="true", description="Launch RViz2")
+        DeclareLaunchArgument("cell", default_value="alpha", choices=[
+                              "alpha", "beta"], description="Inspection cell type"),
+        DeclareLaunchArgument("ur_type", default_value="ur5e",
+                              description="Type of UR robot"),
+        DeclareLaunchArgument("use_fake_hardware",
+                              default_value="true", description="Sim mode"),
+        DeclareLaunchArgument(
+            "mock_sensor_commands", default_value="false", description="Mock sensor commands"),
+        DeclareLaunchArgument(
+            "headless_mode", default_value="false", description="Disable GUI"),
+        DeclareLaunchArgument(
+            "launch_rviz", default_value="true", description="Launch RViz2")
     ]
 
     # -------------------------------
     # Launch Configs
     # -------------------------------
+    cell = LaunchConfiguration("cell")
     ur_type = LaunchConfiguration("ur_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
@@ -49,9 +58,12 @@ def generate_launch_description():
         Command([
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
-            PathJoinSubstitution([pkg_descr, "urdf", "inspection_cell.urdf.xacro"]),
+            PathJoinSubstitution(
+                [pkg_descr, "urdf", "inspection_cell.urdf.xacro"]),
             " ",
             "name:=inspection_cell",
+            " ",
+            "cell:=", cell,
             " ",
             "ur_type:=", ur_type,
             " ",
@@ -69,21 +81,29 @@ def generate_launch_description():
             " ",
             "safety_k_position:=20",
             " ",
-            "joint_limit_params:=", PathJoinSubstitution([pkg_descr, "config", "joint_limits.yaml"]),
+            "joint_limit_params:=", PathJoinSubstitution(
+                [pkg_descr, "config", cell, "joint_limits.yaml"]),
             " ",
-            "kinematics_params:=", PathJoinSubstitution([pkg_descr, "config", "my_robot_calibration.yaml"]),
+            "kinematics_params:=", PathJoinSubstitution(
+                [pkg_descr, "config", cell, "my_robot_calibration.yaml"]),
             " ",
-            "physical_params:=", PathJoinSubstitution([pkg_descr, "config", "physical_parameters.yaml"]),
+            "physical_params:=", PathJoinSubstitution(
+                [pkg_descr, "config", cell, "physical_parameters.yaml"]),
             " ",
-            "visual_params:=", PathJoinSubstitution([pkg_descr, "config", "visual_parameters.yaml"]),
+            "visual_params:=", PathJoinSubstitution(
+                [pkg_descr, "config", cell, "visual_parameters.yaml"]),
             " ",
-            "script_filename:=", PathJoinSubstitution([pkg_ur_driver, "resources", "external_control.urscript"]),
+            "script_filename:=", PathJoinSubstitution(
+                [pkg_ur_driver, "resources", "external_control.urscript"]),
             " ",
-            "input_recipe_filename:=", PathJoinSubstitution([pkg_ur_driver, "resources", "rtde_input_recipe.txt"]),
+            "input_recipe_filename:=", PathJoinSubstitution(
+                [pkg_ur_driver, "resources", "rtde_input_recipe.txt"]),
             " ",
-            "output_recipe_filename:=", PathJoinSubstitution([pkg_ur_driver, "resources", "rtde_output_recipe.txt"]),
+            "output_recipe_filename:=", PathJoinSubstitution(
+                [pkg_ur_driver, "resources", "rtde_output_recipe.txt"]),
             " ",
-            "initial_positions_file:=", PathJoinSubstitution([pkg_descr, "config", "initial_positions.yaml"]),
+            "initial_positions_file:=", PathJoinSubstitution(
+                [pkg_descr, "config", cell, "initial_positions.yaml"]),
             " ",
             "hash:=calib_unified_7dof_12345678901234567890"
         ]),
@@ -114,7 +134,8 @@ def generate_launch_description():
         executable="ros2_control_node",
         parameters=[robot_controllers],
         output="screen",
-        remappings=[("/controller_manager/robot_description", "/robot_description")]
+        remappings=[
+            ("/controller_manager/robot_description", "/robot_description")]
     )
 
     joint_state_pub_gui = Node(
@@ -171,7 +192,8 @@ def generate_launch_description():
         condition=IfCondition(launch_rviz),
         name="rviz2",
         output="screen",
-        arguments=["-d", PathJoinSubstitution([pkg_descr, "rviz", "inspection_cell.rviz"])]
+        arguments=[
+            "-d", PathJoinSubstitution([pkg_descr, "rviz", "inspection_cell.rviz"])]
     )
 
     return LaunchDescription(
