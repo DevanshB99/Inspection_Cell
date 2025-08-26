@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
@@ -282,15 +282,15 @@ def generate_launch_description():
         condition=IfCondition(launch_moveit)
     )
 
-    rviz_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare("inspection_cell_moveit_config"),
-                "launch", "moveit_rviz.launch.py"
-            ])
-        ]),
-        condition=IfCondition(launch_rviz)
-    )
+    # rviz_launch = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([
+    #         PathJoinSubstitution([
+    #             FindPackageShare("inspection_cell_moveit_config"),
+    #             "launch", "moveit_rviz.launch.py"
+    #         ])
+    #     ]),
+    #     condition=IfCondition(launch_rviz)
+    # )
 
     return LaunchDescription([
         ur_dashboard_client,
@@ -304,5 +304,5 @@ def generate_launch_description():
         ur5e_forward_position_controller,
         turntable_forward_position_controller,
         moveit_launch,
-        rviz_launch
+        # rviz_launch
     ])
