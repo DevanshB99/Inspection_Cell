@@ -140,10 +140,6 @@ def generate_launch_description():
         " ",
         "initial_positions_file:=",
         initial_positions_file_path,
-    ]
-
-    # Add hardware-specific parameters if not in simulation
-    robot_description_command.extend([
         " ",
         "use_tool_communication:=",
         use_tool_communication,
@@ -167,7 +163,7 @@ def generate_launch_description():
         PathJoinSubstitution([
             FindPackageShare("inspection_cell_description"),
             "config", cell, "visual_parameters.yaml"]),
-    ])
+    ]
 
     robot_description_content = Command(robot_description_command)
     robot_description = {"robot_description": ParameterValue(
@@ -276,6 +272,13 @@ def generate_launch_description():
                 "launch", "move_group.launch.py"  # Use the move_group + moveit_py node
             ])
         ),
+        launch_arguments={
+            "cell": LaunchConfiguration("cell"),
+            "ur_type": LaunchConfiguration("ur_type"),
+            "use_fake_hardware": LaunchConfiguration("use_fake_hardware"),
+            "mock_sensor_commands": LaunchConfiguration("mock_sensor_commands"),
+            "headless_mode": LaunchConfiguration("headless_mode"),
+        }.items(),
         condition=IfCondition(launch_moveit)
     )
 
@@ -300,4 +303,6 @@ def generate_launch_description():
         inspection_cell_forward_position_controller,
         ur5e_forward_position_controller,
         turntable_forward_position_controller,
+        moveit_launch,
+        rviz_launch
     ])

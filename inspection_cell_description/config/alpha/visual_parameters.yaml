@@ -1,0 +1,111 @@
+# Visual parameters for unified system
+mesh_files:
+  table: 
+    visual:
+      mesh:
+        package: inspection_cell_description
+        path: meshes/visual/table.dae
+    collision:
+      mesh:
+        package: inspection_cell_description  
+        path: meshes/collision/table.stl  
+
+  turntable_base:
+    visual:
+      mesh:
+        package: inspection_cell_description
+        path: meshes/visual/turntable_base.dae
+    collision:
+      mesh:
+        package: inspection_cell_description
+        path: meshes/collision/turntable_base.stl
+
+  turntable_disc:
+    visual:
+      mesh:
+        package: inspection_cell_description
+        path: meshes/visual/turntable_disc.dae
+    collision:
+      mesh:
+        package: inspection_cell_description
+        path: meshes/collision/turntable_disc.stl
+
+  base:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/base.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/base.stl
+
+  shoulder:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/shoulder.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/shoulder.stl
+
+  upper_arm:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/upperarm.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/upperarm.stl
+      mesh_files:
+
+  forearm:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/forearm.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/forearm.stl
+
+  wrist_1:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/wrist1.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/wrist1.stl
+    visual_offset: -0.127
+
+  wrist_2:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/wrist2.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/wrist2.stl
+    visual_offset: -0.0997
+
+  wrist_3:
+    visual:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/visual/wrist3.dae
+    collision:
+      mesh:
+        package: ur_description
+        path: meshes/ur5e/collision/wrist3.stl
+    visual_offset: -0.0989
+            
+  # Reference to existing component meshes
+  ur5e_components:
+    base_package: ur_description
+    turntable_package: inspection_turntable_description
+    eoat_package: inspection_eoat_description

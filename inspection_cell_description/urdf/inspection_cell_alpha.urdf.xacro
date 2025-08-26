@@ -50,7 +50,7 @@
     sim_gazebo:=false
     sim_ignition:=false
     headless_mode:=false
-    initial_positions:=${dict(turntable_disc_joint=0.0,shoulder_pan_joint=0.0,shoulder_lift_joint=-1.57,elbow_joint=1.57,wrist_1_joint=-1.57,wrist_2_joint=-1.57,wrist_3_joint=0.0)}
+    initial_positions:=${dict(turntable_disc_joint=0.0,shoulder_pan_joint=0.0,shoulder_lift_joint=0.0,elbow_joint=0.0,wrist_1_joint=0.0,wrist_2_joint=0.0,wrist_3_joint=0.0)}
     use_tool_communication:=false
     tool_voltage:=0
     tool_parity:=0
@@ -96,7 +96,7 @@
         initial_positions="${initial_positions}"
         tf_prefix="${tf_prefix}"
         hash="${hash}"
-        robot_ip="${robot_ip}"
+        robot_ip="192.168.0.12"
         script_filename="${script_filename}"
         output_recipe_filename="${output_recipe_filename}"
         input_recipe_filename="${input_recipe_filename}"

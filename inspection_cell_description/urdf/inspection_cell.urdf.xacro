@@ -40,22 +40,17 @@
    <!-- ================================================================ -->
    <!-- CONFIGURATION FILES -->
    <!-- ================================================================ -->
-   <xacro:arg name="joint_limit_params" default="$(find inspection_cell_description)/config/cell_${cell}/joint_limits.yaml"/>
-   <xacro:arg name="kinematics_params" default="$(find inspection_cell_description)/config/cell_${cell}/kinematics.yaml"/>
-   <xacro:arg name="physical_params" default="$(find inspection_cell_description)/config/cell_${cell}/physical_parameters.yaml"/>
-   <xacro:arg name="visual_params" default="$(find inspection_cell_description)/config/cell_${cell}/visual_parameters.yaml"/>
+   <xacro:arg name="joint_limit_params" default="$(find inspection_cell_description)/config/${cell}/joint_limits.yaml"/>
+   <xacro:arg name="kinematics_params" default="$(find inspection_cell_description)/config/${cell}/kinematics.yaml"/>
+   <xacro:arg name="physical_params" default="$(find inspection_cell_description)/config/${cell}/physical_parameters.yaml"/>
+   <xacro:arg name="visual_params" default="$(find inspection_cell_description)/config/${cell}/visual_parameters.yaml"/>
    <xacro:arg name="transmission_hw_interface" default=""/>
    
    <!-- ================================================================ -->
    <!-- ROS2_CONTROL RELATED PARAMETERS -->
    <!-- ================================================================ -->
    <xacro:arg name="headless_mode" default="false" />
-   <xacro:if value="${cell == 'alpha'}">
-    <xacro:arg name="robot_ip" default="192.168.1.102" />
-   </xacro:if>
-   <xacro:if value="${cell == 'beta'}">
-    <xacro:arg name="robot_ip" default="192.168.1.103" />
-   </xacro:if>
+   <xacro:arg name="robot_ip" default="192.168.0.102" />
    <xacro:arg name="script_filename" default=""/>
    <xacro:arg name="output_recipe_filename" default=""/>
    <xacro:arg name="input_recipe_filename" default=""/>
@@ -93,7 +88,7 @@
    <!-- ================================================================ -->
    <!-- INITIAL POSITION FOR SIMULATIONS -->
    <!-- ================================================================ -->
-   <xacro:arg name="initial_positions_file" default="$(find inspection_cell_description)/config/cell_${cell}/initial_positions.yaml"/>
+   <xacro:arg name="initial_positions_file" default="$(find inspection_cell_description)/config/${cell}/initial_positions.yaml"/>
 
    <!-- Convert to property to use substitution in function -->
    <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>

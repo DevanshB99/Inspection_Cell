@@ -1,29 +1,81 @@
 import time
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration, Command
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_move_group_launch
 from ur_moveit_config.launch_common import load_yaml
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 from launch.actions import TimerAction
 
 
 def generate_launch_description():
+    declared_arguments = [
+        DeclareLaunchArgument("cell", default_value="beta", choices=[
+                              "alpha", "beta"], description="Inspection cell type"),
+        DeclareLaunchArgument("ur_type", default_value="ur5e",
+                              description="Type of UR robot"),
+        DeclareLaunchArgument("use_fake_hardware",
+                              default_value="true", description="Sim mode"),
+        DeclareLaunchArgument(
+            "mock_sensor_commands", default_value="false", description="Mock sensor commands"),
+        DeclareLaunchArgument(
+            "headless_mode", default_value="false", description="Disable GUI"),
+        DeclareLaunchArgument(
+            "launch_rviz", default_value="true", description="Launch RViz2")
+    ]
+
+    return LaunchDescription([
+        *declared_arguments,
+        OpaqueFunction(function=launch_setup)
+    ])
+
+
+def launch_setup(context):
+    # Get the actual cell value at launch time
+    cell = LaunchConfiguration("cell").perform(context)
+    print(cell)
+
+    xacro_mappings = {
+        'cell': LaunchConfiguration("cell").perform(context),
+        'use_fake_hardware': LaunchConfiguration("use_fake_hardware").perform(context),
+        'mock_sensor_commands': LaunchConfiguration("mock_sensor_commands").perform(context),
+        'headless_mode': LaunchConfiguration("headless_mode").perform(context),
+    }
+    print(xacro_mappings)
+
+    urdf_file_path = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "urdf",
+        "inspection_cell.urdf.xacro"
+    ]).perform(context)
+
+    joint_limits_file = PathJoinSubstitution([
+        FindPackageShare("inspection_cell_description"),
+        "config",
+        cell,
+        "joint_limits.yaml"
+    ]).perform(context)
+    print(joint_limits_file)
+
     moveit_config = (
         MoveItConfigsBuilder(
             "inspection_cell",
             package_name="inspection_cell_moveit_config")
-        .robot_description_semantic(file_path="config/inspection_cell.srdf")
-        .robot_description_kinematics(file_path="config/kinematics.yaml")
-        .moveit_cpp(file_path="config/motion_planning.yaml")
-        .joint_limits(file_path="config/joint_limits.yaml")
+        .robot_description(file_path=urdf_file_path,
+                           mappings=xacro_mappings)
+        # .robot_description_semantic(file_path="config/inspection_cell.srdf")
+        # .moveit_cpp(file_path="config/motion_planning.yaml")
+        .joint_limits(file_path=joint_limits_file)
         .planning_pipelines(default_planning_pipeline="ompl", pipelines=["ompl", "chomp", "pilz_industrial_motion_planner"])
-        .trajectory_execution(moveit_manage_controllers=True)
-        .planning_scene_monitor(
-            publish_planning_scene=True,
-            publish_geometry_updates=True,
-            publish_state_updates=True,
-            publish_transforms_updates=True,
-        )
+        # .trajectory_execution(moveit_manage_controllers=True)
+        # .planning_scene_monitor(
+        #     publish_planning_scene=True,
+        #     publish_geometry_updates=True,
+        #     publish_state_updates=True,
+        #     publish_transforms_updates=True,
+        # )
         .to_moveit_configs()
     )
 
@@ -33,11 +85,11 @@ def generate_launch_description():
     servo_yaml = load_yaml(
         "inspection_cell_moveit_config", "config/cell_servo.yaml")
     servo_params = {"moveit_servo": servo_yaml}
+
     servo_node = Node(
         package="moveit_servo",
         executable="servo_node",
         name="servo_node",
-        # namespace="inspection_cell",
         parameters=[
             servo_params,
             moveit_config.robot_description,
@@ -47,4 +99,6 @@ def generate_launch_description():
         output="screen",
     )
 
-    return LaunchDescription([move_group_launch, servo_node])
+    return [move_group_launch,
+            # servo_node
+            ]
