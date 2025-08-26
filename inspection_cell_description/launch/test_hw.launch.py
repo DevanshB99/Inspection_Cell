@@ -12,16 +12,18 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.parameter_descriptions import ParameterValue
 from launch.actions import TimerAction
 
+
 def generate_launch_description():
     """
     Launch setup function with context access for dynamic configuration
     """
-    
+
     # ================================================================
     # INITIALIZE LAUNCH CONFIGURATIONS WITH CONTEXT
     # ================================================================
-    robot_ip = "192.168.1.102"
-    ur_type = "ur5e" 
+    cell = "alpha"  # Options: alpha, beta
+    robot_ip = "192.168.1.12"
+    ur_type = "ur5e"
     safety_limits = "true"
     headless_mode = "false"
     use_tool_communication = "false"
@@ -29,27 +31,28 @@ def generate_launch_description():
     # ================================================================
     # DYNAMIC CONFIGURATION WITH CONTEXT
     # ================================================================
-    
-    
+
     # UR update rate configuration
     ur5e_update_rate_config = PathJoinSubstitution([
         FindPackageShare("ur_robot_driver"),
-        "config", 
+        "config",
         "ur5e_update_rate.yaml"
     ])
 
     # ================================================================
     # ROBOT DESCRIPTION GENERATION
     # ================================================================
-    
+
     robot_description_content = Command([
         PathJoinSubstitution([FindExecutable(name="xacro")]),
         " ",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "urdf", 
+            FindPackageShare("inspection_cell_description"),
+            "urdf",
             "inspection_cell.urdf.xacro"
         ]),
+        " ",
+        "cell:=", cell,
         " ",
         "name:=inspection_cell",
         " ",
@@ -68,58 +71,58 @@ def generate_launch_description():
         # UR Driver Required Files
         "script_filename:=",
         PathJoinSubstitution([
-            FindPackageShare("ur_client_library"), 
-            "resources", 
+            FindPackageShare("ur_client_library"),
+            "resources",
             "external_control.urscript"
         ]),
         " ",
         "output_recipe_filename:=",
         PathJoinSubstitution([
-            FindPackageShare("ur_robot_driver"), 
-            "resources", 
+            FindPackageShare("ur_robot_driver"),
+            "resources",
             "rtde_output_recipe.txt"
         ]),
         " ",
         "input_recipe_filename:=",
         PathJoinSubstitution([
-            FindPackageShare("ur_robot_driver"), 
-            "resources", 
+            FindPackageShare("ur_robot_driver"),
+            "resources",
             "rtde_input_recipe.txt"
         ]),
         " ",
         # System Configuration Files
         "joint_limit_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "joint_limits.yaml"
         ]),
         " ",
         "kinematics_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "my_robot_calibration.yaml"
         ]),
         " ",
         "physical_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "physical_parameters.yaml"
         ]),
         " ",
         "visual_params:=",
         PathJoinSubstitution([
-            FindPackageShare("inspection_cell_description"), 
-            "config", 
+            FindPackageShare("inspection_cell_description"),
+            "config",
             "visual_parameters.yaml"
         ]),
         " ",
         "initial_positions_file:=",
         PathJoinSubstitution([
             FindPackageShare("inspection_cell_description"),
-            "config", 
+            "config",
             "initial_positions.yaml"
         ]),
     ])
@@ -135,7 +138,8 @@ def generate_launch_description():
     )
 
     moveit_config = (
-        MoveItConfigsBuilder("inspection_cell", package_name="inspection_cell_moveit_config")
+        MoveItConfigsBuilder(
+            "inspection_cell", package_name="inspection_cell_moveit_config")
         .planning_scene_monitor(
             publish_robot_description=True, publish_robot_description_semantic=True
         )
@@ -146,11 +150,11 @@ def generate_launch_description():
         .to_moveit_configs()
     )
 
-    #moveit_config = MoveItConfigsBuilder("inspection_cell", package_name="inspection_cell_moveit_config").trajectory_execution().to_moveit_configs()
+    # moveit_config = MoveItConfigsBuilder("inspection_cell", package_name="inspection_cell_moveit_config").trajectory_execution().to_moveit_configs()
 
     ur_dashboard_client = Node(
         package="ur_robot_driver",
-        executable="dashboard_client", 
+        executable="dashboard_client",
         name="ur_dashboard_client",
         parameters=[{"robot_ip": robot_ip}],
         output="screen",
@@ -190,7 +194,8 @@ def generate_launch_description():
             ur5e_update_rate_config,
         ],
         output="screen",
-        remappings=[("/controller_manager/robot_description", "/robot_description")],
+        remappings=[
+            ("/controller_manager/robot_description", "/robot_description")],
     )
 
     joint_state_broadcaster_spawner = Node(
@@ -209,14 +214,14 @@ def generate_launch_description():
         name="inspection_cell_controller_spawner",
         arguments=[
             "inspection_cell_controllerv1",
-            "--controller-manager", "/controller_manager", 
+            "--controller-manager", "/controller_manager",
         ],
         output="screen",
     )
 
     # # 8. BACKUP: UR-only controller (inactive)
     ur_controller_spawner = Node(
-        package="controller_manager", 
+        package="controller_manager",
         executable="spawner",
         name="ur_controller_spawner",
         arguments=[
@@ -230,7 +235,7 @@ def generate_launch_description():
     # # 9. BACKUP: Turntable-only controller (inactive)
     turntable_trajectory_controller_spawner = Node(
         package="controller_manager",
-        executable="spawner", 
+        executable="spawner",
         name="turntable_trajectory_controller_spawner",
         arguments=[
             "turntable_trajectory_controllerv1",
@@ -249,8 +254,7 @@ def generate_launch_description():
             ])
         ]),
     )
-    
-        
+
     return LaunchDescription(
         [
             robot_state_publisher,

@@ -1,18 +1,21 @@
 import time
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration, Command
 from moveit_configs_utils import MoveItConfigsBuilder
 from moveit_configs_utils.launches import generate_move_group_launch, generate_moveit_rviz_launch
 from ur_moveit_config.launch_common import load_yaml
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import TimerAction
 
 
 def launch_setup(context):
     # Get the actual cell value at launch time
     cell = LaunchConfiguration("cell").perform(context)
+    launch_rviz = LaunchConfiguration("launch_rviz")
 
     xacro_mappings = {
         'cell': LaunchConfiguration("cell").perform(context),
@@ -20,12 +23,6 @@ def launch_setup(context):
         'mock_sensor_commands': LaunchConfiguration("mock_sensor_commands").perform(context),
         'headless_mode': LaunchConfiguration("headless_mode").perform(context),
     }
-
-    urdf_file_path = PathJoinSubstitution([
-        FindPackageShare("inspection_cell_description"),
-        "urdf",
-        "inspection_cell.urdf.xacro"
-    ]).perform(context)
 
     joint_limits_file = PathJoinSubstitution([
         FindPackageShare("inspection_cell_description"),
@@ -38,8 +35,8 @@ def launch_setup(context):
         MoveItConfigsBuilder(
             "inspection_cell", package_name="inspection_cell_moveit_config"
         )
-        .robot_description(file_path=urdf_file_path,
-                           mappings=xacro_mappings)
+        .robot_description(
+            mappings=xacro_mappings)
         .robot_description_semantic(file_path="config/inspection_cell.srdf")
         .moveit_cpp(file_path="config/motion_planning.yaml")
         .joint_limits(file_path=joint_limits_file)
@@ -57,7 +54,15 @@ def launch_setup(context):
     )
 
     move_group_launch = generate_move_group_launch(moveit_config)
-    rviz_launch = generate_moveit_rviz_launch(moveit_config)
+
+    rviz_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare("inspection_cell_moveit_config"),
+                "launch", "moveit_rviz.launch.py"
+            ])
+        ]),
+    )
 
     # Get parameters for the Servo node
     servo_yaml = load_yaml(
@@ -98,6 +103,8 @@ def generate_launch_description():
                 "mock_sensor_commands", default_value="false", description="Mock sensor commands"),
             DeclareLaunchArgument(
                 "headless_mode", default_value="false", description="Disable GUI"),
+            DeclareLaunchArgument("launch_rviz", default_value="true",
+                                  description="Launch RViz for visualization."),
             OpaqueFunction(function=launch_setup)
         ]
     )

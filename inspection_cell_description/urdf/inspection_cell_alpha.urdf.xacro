@@ -60,7 +60,7 @@
     tool_tx_idle_chars:=3.5
     tool_device_name:=/tmp/ttyUR
     tool_tcp_port:=54321
-    robot_ip:=0.0.0.0
+    robot_ip:=192.168.0.12
     script_filename:=to_be_filled_by_ur_robot_driver
     output_recipe_filename:=to_be_filled_by_ur_robot_driver
     input_recipe_filename:=to_be_filled_by_ur_robot_driver
@@ -96,7 +96,7 @@
         initial_positions="${initial_positions}"
         tf_prefix="${tf_prefix}"
         hash="${hash}"
-        robot_ip="192.168.0.12"
+        robot_ip="${robot_ip}"
         script_filename="${script_filename}"
         output_recipe_filename="${output_recipe_filename}"
         input_recipe_filename="${input_recipe_filename}"

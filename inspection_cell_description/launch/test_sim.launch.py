@@ -22,6 +22,8 @@ def generate_launch_description():
     declared_arguments = [
         DeclareLaunchArgument("cell", default_value="alpha", choices=[
                               "alpha", "beta"], description="Inspection cell type"),
+        DeclareLaunchArgument("sim", default_value="true",
+                              description="Simulation mode"),
         DeclareLaunchArgument("ur_type", default_value="ur5e",
                               description="Type of UR robot"),
         DeclareLaunchArgument("use_fake_hardware",
@@ -38,6 +40,7 @@ def generate_launch_description():
     # Launch Configs
     # -------------------------------
     cell = LaunchConfiguration("cell")
+    sim = LaunchConfiguration("sim")
     ur_type = LaunchConfiguration("ur_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")

@@ -1,7 +1,7 @@
 moveit_setup_assistant_config:
   urdf:
     package: inspection_cell_description
-    relative_path: urdf/inspection_cell.urdf
+    relative_path: urdf/inspection_cell.urdf.xacro
   srdf:
     relative_path: config/inspection_cell.srdf
   package_settings:

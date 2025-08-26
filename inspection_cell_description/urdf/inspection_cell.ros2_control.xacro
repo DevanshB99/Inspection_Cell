@@ -3,7 +3,8 @@
 
   <xacro:macro name="inspection_cell_ros2_control" params="
     name
-    use_fake_hardware:=false mock_sensor_commands:=false
+    use_fake_hardware:=false 
+    mock_sensor_commands:=false
     sim_gazebo:=false
     sim_ignition:=false
     headless_mode:=false
