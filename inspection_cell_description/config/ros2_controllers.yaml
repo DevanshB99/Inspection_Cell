@@ -105,8 +105,6 @@ inspection_cell_controller:
     state_interfaces:
       - position
       - velocity
-    state_publish_rate: 50.0
-    action_monitor_rate: 20.0
     allow_partial_joints_goal: true
     allow_nonzero_velocity_at_trajectory_end: false
 
@@ -138,8 +136,6 @@ ur5e_controller:
     state_interfaces:
       - position
       - velocity
-    state_publish_rate: 50.0
-    action_monitor_rate: 20.0
     allow_partial_joints_goal: false
     allow_nonzero_velocity_at_trajectory_end: false
     constraints:
@@ -162,8 +158,6 @@ turntable_trajectory_controller:
     state_interfaces:
       - position
       - velocity
-    state_publish_rate: 50.0
-    action_monitor_rate: 20.0
     allow_partial_joints_goal: false
     allow_nonzero_velocity_at_trajectory_end: false
     constraints:
@@ -175,7 +169,7 @@ turntable_trajectory_controller:
 turntable_forward_position_controller:
   ros__parameters:
     joints:
-      - disc_joint
+      - turntable_disc_joint
     interface_name: position
 
 # Ur5e-only forward position controller (6 DOF)
