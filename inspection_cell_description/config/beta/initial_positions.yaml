@@ -1,4 +1,4 @@
-shoulder_pan_joint: 0 # 3.14
+shoulder_pan_joint: 1.57 # 3.14
 turntable_disc_joint: 0.0
 shoulder_lift_joint: -1.57
 elbow_joint: 1.57
