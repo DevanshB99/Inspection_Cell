@@ -113,7 +113,7 @@ def launch_setup(context):
         "kinematics_params:=",
         PathJoinSubstitution([
             FindPackageShare("inspection_cell_description"),
-            "config", cell, "my_robot_calibration.yaml"]),
+            "config", cell, "kinematics.yaml"]),
         " ",
         "physical_params:=",
         PathJoinSubstitution([

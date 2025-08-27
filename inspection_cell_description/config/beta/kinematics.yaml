@@ -1,7 +1,7 @@
 # Kinematics parameters for 7-DOF inspection cell
 kinematics:
   # Turntable kinematics (base of chain)
-  turntable_disc:
+  turntable:
     x: 0
     y: 0  
     z: 0.098
