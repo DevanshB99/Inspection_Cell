@@ -15,7 +15,6 @@ def generate_launch_description():
         DeclareLaunchArgument("cell", default_value="alpha",
                               choices=["alpha", "beta"]),
         DeclareLaunchArgument("sim", default_value="false",),
-        DeclareLaunchArgument("ur_type", default_value="ur5e"),
         DeclareLaunchArgument("use_fake_hardware", default_value="true"),
         DeclareLaunchArgument("mock_sensor_commands", default_value="false",
                               description="Enable fake command interfaces for sensors used for simple simulations. "
@@ -38,7 +37,6 @@ def generate_launch_description():
 
     cell = LaunchConfiguration("cell")
     sim = LaunchConfiguration("sim")
-    ur_type = LaunchConfiguration("ur_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
     headless_mode = LaunchConfiguration("headless_mode")
@@ -60,7 +58,6 @@ def generate_launch_description():
         launch_arguments={
             "cell": cell,
             "sim": sim,
-            "ur_type": ur_type,
             "use_fake_hardware": use_fake_hardware,
             "mock_sensor_commands": mock_sensor_commands,
             "headless_mode": headless_mode,
@@ -81,7 +78,6 @@ def generate_launch_description():
         ),
         launch_arguments={
             "cell": LaunchConfiguration("cell"),
-            "ur_type": LaunchConfiguration("ur_type"),
             "use_fake_hardware": LaunchConfiguration("use_fake_hardware"),
             "mock_sensor_commands": LaunchConfiguration("mock_sensor_commands"),
             "headless_mode": LaunchConfiguration("headless_mode"),

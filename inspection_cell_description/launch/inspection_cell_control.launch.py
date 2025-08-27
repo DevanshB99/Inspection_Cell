@@ -14,7 +14,6 @@ def launch_setup(context):
 
     cell = LaunchConfiguration("cell")
     sim = LaunchConfiguration("sim")
-    ur_type = LaunchConfiguration("ur_type")
     mock_sensor_commands = LaunchConfiguration("mock_sensor_commands")
     headless_mode = LaunchConfiguration("headless_mode")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
@@ -63,9 +62,6 @@ def launch_setup(context):
         " ",
         "cell:=",
         cell,
-        " ",
-        "ur_type:=",
-        ur_type,
         " ",
         "use_fake_hardware:=",
         use_fake_hardware,
@@ -266,7 +262,7 @@ def launch_setup(context):
         # "io_and_status_controller",
         # "speed_scaling_state_broadcaster",
         # "force_torque_sensor_broadcaster",
-        "tcp_pose_broadcaster",
+        # "tcp_pose_broadcaster",
         # "ur_configuration_controller",
         "ur5e_forward_position_controller",
         "turntable_forward_position_controller",
@@ -314,7 +310,6 @@ def generate_launch_description():
         DeclareLaunchArgument("cell", default_value="alpha",
                               choices=["alpha", "beta"]),
         DeclareLaunchArgument("sim", default_value="false",),
-        DeclareLaunchArgument("ur_type", default_value="ur5e"),
         DeclareLaunchArgument("use_fake_hardware", default_value="true"),
         DeclareLaunchArgument("mock_sensor_commands", default_value="false",
                               description="Enable fake command interfaces for sensors used for simple simulations. "
@@ -333,7 +328,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "initial_joint_controller",
-            default_value="false",
+            default_value="ur5e_forward_position_controller",
             description="Activate loaded joint controller.",
         ),
         DeclareLaunchArgument("safety_limits", default_value="true",

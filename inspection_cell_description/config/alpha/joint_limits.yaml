@@ -41,8 +41,8 @@ joint_limits:
     max_effort: 150.0
   wrist_1_joint:
     has_position_limits: true
-    min_position: -2.35619449
-    max_position: -0.785398164
+    min_position: -3.14159265
+    max_position: 0.0
     has_velocity_limits: true
     max_velocity: 3.141592653589793
     has_acceleration_limits: true
@@ -61,8 +61,8 @@ joint_limits:
     max_effort: 150.0
   wrist_3_joint:
     has_position_limits: true
-    min_position: -0.785398164
-    max_position: 0.785398164
+    min_position: -1.57079633
+    max_position: 1.57079633
     has_velocity_limits: true
     max_velocity: 3.141592653589793
     has_acceleration_limits: true
