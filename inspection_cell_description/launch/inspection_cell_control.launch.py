@@ -283,8 +283,8 @@ def launch_setup(context):
         controllers_active.remove(
             initial_joint_controller.perform(context))
 
-    if use_fake_hardware.perform(context) == "true":
-        controllers_active.remove("tcp_pose_broadcaster")
+    # if use_fake_hardware.perform(context) == "true":
+    #     controllers_active.remove("tcp_pose_broadcaster")
 
     controller_spawners = [
         controller_spawner(controllers_active),
