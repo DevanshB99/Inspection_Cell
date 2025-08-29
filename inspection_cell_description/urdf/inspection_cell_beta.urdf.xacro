@@ -509,6 +509,64 @@
     <link name="${tf_prefix}turntable_base"/>
 
     <!-- ================================================================ -->
+    <!-- PLANNING VOLUME -->
+    <!-- ================================================================ -->
+
+    <!-- Define your planning volume dimensions -->
+    <xacro:property name="planning_width" value="0.620"/>   <!-- X dimension -->
+    <xacro:property name="planning_depth" value="0.620"/>   <!-- Y dimension -->
+    <xacro:property name="planning_height" value="1.000"/>  <!-- Z dimension -->
+    <xacro:property name="wall_thickness" value="0.001"/>
+
+    <link name="${tf_prefix}planning_volume">
+      <!-- Front wall (positive X) -->
+      <collision name="wall_front">
+      <origin xyz="${planning_width/2} 0 ${planning_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${wall_thickness} ${planning_depth} ${planning_height}"/>
+      </geometry>
+      </collision>
+
+      <!-- Back wall (negative X) -->
+      <collision name="wall_back">
+      <origin xyz="${-planning_width/2} 0 ${planning_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${wall_thickness} ${planning_depth} ${planning_height}"/>
+      </geometry>
+      </collision>
+
+      <!-- Left wall (positive Y) -->
+      <collision name="wall_left">
+      <origin xyz="0 ${planning_depth/2} ${planning_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${planning_width} ${wall_thickness} ${planning_height}"/>
+      </geometry>
+      </collision>
+
+      <!-- Right wall (negative Y) -->
+      <collision name="wall_right">
+      <origin xyz="0 ${-planning_depth/2} ${planning_height/2}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${planning_width} ${wall_thickness} ${planning_height}"/>
+      </geometry>
+      </collision>
+
+      <!-- Ceiling (positive Z) -->
+      <collision name="wall_ceiling">
+        <origin xyz="0 0 ${planning_height}" rpy="0 0 0"/>
+        <geometry>
+          <box size="${planning_width} ${planning_depth} ${wall_thickness}"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${tf_prefix}turntable_base_to_planning_volume" type="fixed">
+      <parent link="${tf_prefix}turntable_base_link"/>
+      <child link="${tf_prefix}planning_volume"/>
+      <origin xyz="0.0 0.325 0.0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- ================================================================ -->
     <!-- JOINTS - OBJECT-CENTRIC UNIFIED KINEMATIC CHAIN -->
     <!-- ================================================================ -->
 
