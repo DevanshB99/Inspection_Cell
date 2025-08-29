@@ -9,9 +9,6 @@ Panels:
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-        - /Pose1
-        - /Axes1
-        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 1023
   - Class: rviz_common/Help
@@ -119,6 +116,11 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+          planning_volume:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           shoulder_link:
             Alpha: 1
             Show Axes: false
@@ -272,6 +274,11 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+          planning_volume:
+            Alpha: 1
+            Show Axes: false
+            Show Trail: false
+            Value: true
           shoulder_link:
             Alpha: 1
             Show Axes: false
@@ -356,7 +363,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /viewpoint_generation/viewpoint
+        Value: /inspection_task_planning/selected_viewpoint
       Value: true
     - Class: rviz_default_plugins/Axes
       Enabled: true
@@ -364,19 +371,6 @@ Visualization Manager:
       Name: Axes
       Radius: 0.019999999552965164
       Reference Frame: eoat_camera_link
-      Value: true
-    - Class: rviz_default_plugins/Marker
-      Enabled: true
-      Name: Marker
-      Namespaces:
-        {}
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /constraint_visualization
       Value: true
   Enabled: true
   Global Options:
@@ -396,25 +390,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 5.682345867156982
+      Distance: 2.9006142616271973
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.16647623479366302
-        Y: -0.1962398886680603
-        Z: 0.4837383031845093
+        X: 0.18070238828659058
+        Y: -0.0825132504105568
+        Z: 0.46630042791366577
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4299997091293335
+      Pitch: 0.5549996495246887
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 2.3770265579223633
+      Yaw: 3.1520278453826904
     Saved: ~
 Window Geometry:
   Displays:

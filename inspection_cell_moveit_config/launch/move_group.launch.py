@@ -62,6 +62,7 @@ def launch_setup(context):
                 "launch", "moveit_rviz.launch.py"
             ])
         ]),
+        launch_arguments={'log_level': 'ERROR'}.items()
     )
 
     # Get parameters for the Servo node
@@ -80,7 +81,7 @@ def launch_setup(context):
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits
         ],
-        output="screen",
+        arguments=['--ros-args', '--log-level', 'ERROR']
     )
 
     return [  # move_group_node,
