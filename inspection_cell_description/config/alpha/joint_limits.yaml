@@ -32,7 +32,7 @@ joint_limits:
   elbow_joint:
     has_position_limits: true
     min_position: 0.78539816
-    max_position: 2.35619449
+    max_position: 2.61799388
     has_velocity_limits: true
     max_velocity: 1.57
     has_acceleration_limits: true
