@@ -498,6 +498,22 @@
       </inertial>
     </link>
 
+    <link name="${tf_prefix}camera_depth_optical_frame">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 ${radians(-90)} 0"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.030"/>
+        </geometry>
+        <material name="depth_camera_optical_frame_material"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 ${radians(-90)} 0"/>
+        <geometry>
+          <cylinder radius="0.015" length="0.030"/>
+        </geometry>
+      </collision>
+    </link>
+
     <!-- ================================================================ -->
     <!-- INDUSTRIAL COMPATIBILITY FRAMES -->
     <!-- ================================================================ -->
@@ -804,6 +820,12 @@
       <parent link="${tf_prefix}eoat_base_link"/>
       <child link="${tf_prefix}eoat_camera_link"/>
       <origin xyz="0 0 0.125" rpy="${radians(90)} ${radians(0)} ${radians(-90)}"/>
+    </joint>
+
+    <joint name="${tf_prefix}camera_depth_optical_joint" type="fixed">
+      <parent link="${tf_prefix}eoat_base_link"/>
+      <child link="${tf_prefix}camera_depth_optical_frame"/>
+      <origin xyz="-0.080 0 0.06" rpy="0 ${radians(-180)} 0"/>
     </joint>
 
     <!-- ================================================================ -->
