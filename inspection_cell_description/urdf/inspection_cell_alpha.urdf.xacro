@@ -825,7 +825,7 @@
     <joint name="${tf_prefix}camera_depth_optical_joint" type="fixed">
       <parent link="${tf_prefix}eoat_base_link"/>
       <child link="${tf_prefix}camera_depth_optical_frame"/>
-      <origin xyz="-0.080 0 0.06" rpy="0 ${radians(-180)} 0"/>
+      <origin xyz="-0.080 0 0.06" rpy="${radians(90)} 0 ${radians(-90)}"/>
     </joint>
 
     <!-- ================================================================ -->
