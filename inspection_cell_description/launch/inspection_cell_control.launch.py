@@ -215,7 +215,7 @@ def launch_setup(context):
         condition=UnlessCondition(use_fake_hardware),
         parameters=[
             {"headless_mode": headless_mode},
-            {"joint_controller_active": "true"},
+            {"joint_controller_active": True},
             {
                 "consistent_controllers": [
                     "io_and_status_controller",
