@@ -29,7 +29,7 @@
     <color rgba="0.1 0.1 0.1 1.0"/>
   </material>
   <material name="vention_blue">
-    <color rgba="0.0 0.2 0.8 1.0"/>
+    <color rgba="0.122 0.184 0.09 1.0"/>
   </material>
 
   <xacro:macro name="inspection_cell" params="

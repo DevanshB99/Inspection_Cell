@@ -11,10 +11,11 @@ Panels:
         - /MotionPlanning1/Planned Path1
         - /Axes1
         - /PointCloud21
-        - /PointCloud21/Status1
         - /Pose2
+        - /Camera1
+        - /Wrench1
       Splitter Ratio: 0.5
-    Tree Height: 678
+    Tree Height: 365
   - Class: rviz_common/Help
     Name: Help
   - Class: rviz_common/Views
@@ -83,7 +84,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          camera_depth_optical_frame:
+          camera_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -246,7 +247,7 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          camera_depth_optical_frame:
+          camera_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -390,7 +391,7 @@ Visualization Manager:
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
         Max Value: 0.5
-        Min Value: 0.0990000069141388
+        Min Value: 0.4100000262260437
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -413,6 +414,7 @@ Visualization Manager:
       Topic:
         Depth: 5
         Durability Policy: Volatile
+        Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /camera/camera/depth/foreground_points
@@ -439,6 +441,62 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /normal_estimate
       Value: true
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Far Plane Distance: 100
+      Image Rendering: background and overlay
+      Name: Camera
+      Overlay Alpha: 0.5
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /camera/camera/color/image_rect_raw
+      Value: true
+      Visibility:
+        Axes: true
+        Grid: true
+        Image: true
+        MotionPlanning: true
+        PointCloud2: true
+        Pose: true
+        Value: true
+        Wrench: true
+      Zoom Factor: 1
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /camera/image_raw
+      Value: true
+    - Accept NaN Values: false
+      Alpha: 1
+      Arrow Width: 0.5
+      Class: rviz_default_plugins/Wrench
+      Enabled: true
+      Force Arrow Scale: 0.009999999776482582
+      Force Color: 204; 51; 51
+      History Length: 1
+      Name: Wrench
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /teleop/wrench_cmds
+      Torque Arrow Scale: 0.009999999776482582
+      Torque Color: 204; 204; 51
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -457,27 +515,29 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.5452160835266113
+      Distance: 2.2233006954193115
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.18070238828659058
-        Y: -0.0825132504105568
-        Z: 0.46630042791366577
+        X: 0.8141222596168518
+        Y: 0.6629783511161804
+        Z: -0.465303510427475
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.5899996161460876
+      Pitch: 0.6399993896484375
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 1.3288495540618896
+      Yaw: 3.918851375579834
     Saved: ~
 Window Geometry:
+  Camera:
+    collapsed: false
   Displays:
     collapsed: false
   Height: 1011
@@ -485,11 +545,13 @@ Window Geometry:
     collapsed: false
   Hide Left Dock: false
   Hide Right Dock: true
+  Image:
+    collapsed: false
   MotionPlanning:
     collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002ff00000395fc0200000004fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000004400fffffffb000000100044006900730070006c006100790073010000003f000002e6000000cc00fffffffb0000000800480065006c0070000000029a0000006e0000006f00fffffffb0000000a00560069006500770073010000032b000000a9000000a900ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000019600ffffff000004390000039500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002ff0000039dfc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b000001a8000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d00650072006101000001e9000000870000002800fffffffb0000000a0049006d0061006700650100000276000001620000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff000004390000039d00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1854
