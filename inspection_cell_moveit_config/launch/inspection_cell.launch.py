@@ -5,7 +5,6 @@ from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.parameter_descriptions import ParameterValue
-# from ur_moveit_config.launch_common import load_yaml
 from launch.conditions import IfCondition, UnlessCondition
 from launch.actions import TimerAction, OpaqueFunction
 
@@ -15,7 +14,7 @@ def generate_launch_description():
         DeclareLaunchArgument("cell", default_value="alpha",
                               choices=["alpha", "beta"]),
         DeclareLaunchArgument("sim", default_value="false",),
-        DeclareLaunchArgument("use_fake_hardware", default_value="true"),
+        DeclareLaunchArgument("use_fake_hardware", default_value="false"),
         DeclareLaunchArgument("mock_sensor_commands", default_value="false",
                               description="Enable fake command interfaces for sensors used for simple simulations. "
                               "Used only if 'use_fake_hardware' parameter is true."),
