@@ -8,19 +8,8 @@ Panels:
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-<<<<<<< HEAD
-        - /Axes1
-        - /PointCloud21
-        - /Pose2
-        - /Camera1
-        - /Wrench1
-        - /Marker1
-      Splitter Ratio: 0.5
-    Tree Height: 332
-=======
       Splitter Ratio: 0.5
     Tree Height: 222
->>>>>>> cf42d9a (changed the urdf for depth camera and turntable)
   - Class: rviz_common/Help
     Name: Help
   - Class: rviz_common/Views
@@ -395,13 +384,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-<<<<<<< HEAD
-        Max Value: 0.5
-        Min Value: 0.19600000977516174
-=======
         Max Value: 0.20605063438415527
         Min Value: 0.031737640500068665
->>>>>>> cf42d9a (changed the urdf for depth camera and turntable)
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -539,36 +523,32 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.067767381668091
+      Distance: 3.003424644470215
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.485881507396698
-        Y: 0.7646381258964539
-        Z: -0.5637273192405701
+        X: 0.8261061906814575
+        Y: 0.5098883509635925
+        Z: -0.5382901430130005
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7249993085861206
+      Pitch: 0.6449993848800659
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 4.353853225708008
+      Yaw: 3.913850784301758
     Saved: ~
 Window Geometry:
   Camera:
     collapsed: false
   Displays:
     collapsed: false
-<<<<<<< HEAD
-  Height: 939
-=======
   Height: 1016
->>>>>>> cf42d9a (changed the urdf for depth camera and turntable)
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -579,17 +559,9 @@ Window Geometry:
     collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-<<<<<<< HEAD
-  QMainWindow State: 000000ff00000000fd0000000200000000000002ff00000355fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b00000187000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d00650072006101000001c80000007c0000002800fffffffb0000000a0049006d006100670065010000024a000001460000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff0000047b0000035500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-=======
   QMainWindow State: 000000ff00000000fd0000000200000000000002ff000003a2fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b00000119000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d006500720061010000015a0000012b0000002800fffffffb0000000a0049006d006100670065010000028b000001520000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff0000047b000003a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
->>>>>>> cf42d9a (changed the urdf for depth camera and turntable)
   Views:
     collapsed: false
   Width: 1920
   X: 0
-<<<<<<< HEAD
-  Y: 32
-=======
   Y: 27
->>>>>>> cf42d9a (changed the urdf for depth camera and turntable)
