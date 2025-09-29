@@ -642,7 +642,7 @@
     <joint name="${tf_prefix}base_to_ur_mount" type="fixed">
       <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}ur5e_mount_link"/>
-      <origin xyz="0 0.75 0" rpy="0 0 0"/>
+      <origin xyz="0 0.7287 0" rpy="0 0 0"/>
     </joint>
 
     <!-- UR5e Base - Mounted on mount block -->
@@ -826,7 +826,7 @@
     <joint name="${tf_prefix}camera_depth_optical_joint" type="fixed">
       <parent link="${tf_prefix}eoat_base_link"/>
       <child link="${tf_prefix}camera_link"/>
-      <origin xyz="-0.080 0 0.06" rpy="${radians(180)} 0 ${radians(180)}"/>
+      <origin xyz="-0.023 0 0.033" rpy="${radians(180)} 0 ${radians(180)}"/>
     </joint>
 
     <!-- ================================================================ -->
