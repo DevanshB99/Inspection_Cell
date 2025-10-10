@@ -532,8 +532,8 @@
     <!-- ================================================================ -->
 
     <!-- Define your planning volume dimensions -->
-    <xacro:property name="planning_width" value="0.620"/>   <!-- X dimension -->
-    <xacro:property name="planning_depth" value="0.620"/>   <!-- Y dimension -->
+    <xacro:property name="planning_width" value="1.000"/>   <!-- X dimension -->
+    <xacro:property name="planning_depth" value="1.000"/>   <!-- Y dimension -->
     <xacro:property name="planning_height" value="1.000"/>  <!-- Z dimension -->
     <xacro:property name="wall_thickness" value="0.001"/>
 
@@ -582,7 +582,7 @@
     <joint name="${tf_prefix}turntable_base_to_planning_volume" type="fixed">
       <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}planning_volume"/>
-      <origin xyz="0.0 0.325 0.0" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
     </joint>
 
     <!-- ================================================================ -->
