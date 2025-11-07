@@ -507,7 +507,6 @@
         <geometry>
           <cylinder radius="0.015" length="0.030"/>
         </geometry>
-        <material name="depth_camera_optical_frame_material"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 ${radians(90)} 0"/>

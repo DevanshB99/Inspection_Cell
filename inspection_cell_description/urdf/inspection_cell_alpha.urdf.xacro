@@ -481,14 +481,14 @@
       <visual>
         <origin xyz="0 0 0.035"/>
         <geometry>
-          <box size="0.1, 0.1 0.1"/>
+          <box size="0.1 0.1 0.1"/>
         </geometry>
         <material name="eoat_black"/>
       </visual>
       <collision>
         <origin xyz="0 0 0.0625"/>
         <geometry>
-          <box size="0.07, 0.07 0.07"/>
+          <box size="0.07 0.07 0.07"/>
         </geometry>
       </collision>
       <inertial>
@@ -504,7 +504,6 @@
         <geometry>
           <cylinder radius="0.015" length="0.030"/>
         </geometry>
-        <material name="depth_camera_optical_frame_material"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 ${radians(90)} 0"/>
