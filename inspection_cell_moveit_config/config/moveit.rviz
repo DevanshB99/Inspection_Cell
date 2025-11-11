@@ -4,10 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
+        - /Marker2
       Splitter Ratio: 0.5
     Tree Height: 222
   - Class: rviz_common/Help
@@ -92,7 +94,6 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
           eoat_camera_link:
             Alpha: 1
             Show Axes: false
@@ -255,7 +256,6 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
           eoat_camera_link:
             Alpha: 1
             Show Axes: false
@@ -505,6 +505,19 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /viewpoint_generation/bounding_box_marker
       Value: true
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Name: Marker
+      Namespaces:
+        "": true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /viewpoint_generation/planning_volume_marker
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -523,25 +536,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.003424644470215
+      Distance: 8.156135559082031
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.8261061906814575
-        Y: 0.5098883509635925
-        Z: -0.5382901430130005
+        X: 0.6578651070594788
+        Y: 0.6869644522666931
+        Z: 0.13719245791435242
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6449993848800659
+      Pitch: 0.6549991369247437
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.913850784301758
+      Yaw: 4.263851165771484
     Saved: ~
 Window Geometry:
   Camera:
@@ -564,4 +577,4 @@ Window Geometry:
     collapsed: false
   Width: 1920
   X: 0
-  Y: 27
+  Y: 32
