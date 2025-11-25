@@ -9,7 +9,6 @@ mesh_files:
       mesh:
         package: inspection_cell_description  
         path: meshes/collision/table.stl  
-
   turntable_base:
     visual:
       mesh:
@@ -19,7 +18,6 @@ mesh_files:
       mesh:
         package: inspection_cell_description
         path: meshes/collision/turntable_base.stl
-
   turntable_disc:
     visual:
       mesh:

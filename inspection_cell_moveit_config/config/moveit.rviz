@@ -11,7 +11,7 @@ Panels:
         - /MotionPlanning1/Planned Path1
         - /Marker2
       Splitter Ratio: 0.5
-    Tree Height: 222
+    Tree Height: 203
   - Class: rviz_common/Help
     Name: Help
   - Class: rviz_common/Views
@@ -125,7 +125,6 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
           shoulder_link:
             Alpha: 1
             Show Axes: false
@@ -287,7 +286,6 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
           shoulder_link:
             Alpha: 1
             Show Axes: false
@@ -378,14 +376,14 @@ Visualization Manager:
       Enabled: true
       Length: 0.20000000298023224
       Name: Axes
-      Radius: 0.019999999552965164
-      Reference Frame: camera_depth_optical_frame
+      Radius: 0.009999999776482582
+      Reference Frame: eoat_camera_link
       Value: true
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.20605063438415527
-        Min Value: 0.031737640500068665
+        Max Value: 0.21376201510429382
+        Min Value: 0.18476200103759766
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -411,7 +409,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera/d405_camera/depth/image_rect_raw/foreground_points_object_frame_bbox
+        Value: /camera/d405_camera/depth/fov_points_eoat_camera_link_bbox
       Use Fixed Frame: false
       Use rainbow: true
       Value: true
@@ -433,7 +431,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /normal_estimate
+        Value: /orientation_controller/crop_normal
       Value: true
     - Class: rviz_default_plugins/Camera
       Enabled: true
@@ -490,6 +488,25 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /teleop/wrench_cmds
       Torque Arrow Scale: 0.009999999776482582
+      Torque Color: 204; 204; 51
+      Value: true
+    - Accept NaN Values: false
+      Alpha: 1
+      Arrow Width: 0.10000000149011612
+      Class: rviz_default_plugins/Wrench
+      Enabled: true
+      Force Arrow Scale: 2
+      Force Color: 204; 51; 51
+      History Length: 1
+      Name: Wrench
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /orientation_controller/wrench_cmds
+      Torque Arrow Scale: 0.10000000149011612
       Torque Color: 204; 204; 51
       Value: true
     - Class: rviz_default_plugins/Marker
@@ -572,7 +589,7 @@ Window Geometry:
     collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002ff000003a2fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b00000119000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d006500720061010000015a0000012b0000002800fffffffb0000000a0049006d006100670065010000028b000001520000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff0000047b000003a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002ac000003a2fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b00000106000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d00650072006101000001470000013e0000002800fffffffb0000000a0049006d006100670065010000028b000001520000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff000004ce000003a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1920
