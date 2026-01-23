@@ -9,6 +9,7 @@ Panels:
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
+        - /Pose1
         - /Marker2
       Splitter Ratio: 0.5
     Tree Height: 203
@@ -370,7 +371,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /inspection_task_planning/selected_viewpoint
+        Value: /orientation_controller/eoat_desired_pose_in_eoat_camera_link
       Value: true
     - Class: rviz_default_plugins/Axes
       Enabled: true
@@ -382,8 +383,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.21376201510429382
-        Min Value: 0.18476200103759766
+        Max Value: -9999
+        Min Value: 9999
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -526,7 +527,7 @@ Visualization Manager:
       Enabled: true
       Name: Marker
       Namespaces:
-        "": true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -553,25 +554,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.156135559082031
+      Distance: 1.4447436332702637
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.6578651070594788
-        Y: 0.6869644522666931
-        Z: 0.13719245791435242
+        X: 0.2986311912536621
+        Y: -0.07183562219142914
+        Z: -0.2988676428794861
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6549991369247437
+      Pitch: 1.3249990940093994
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 4.263851165771484
+      Yaw: 3.028851270675659
     Saved: ~
 Window Geometry:
   Camera:
@@ -594,4 +595,4 @@ Window Geometry:
     collapsed: false
   Width: 1920
   X: 0
-  Y: 32
+  Y: 27
