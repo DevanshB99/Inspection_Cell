@@ -460,14 +460,14 @@
       <visual>
         <origin xyz="0 0 0.080"/>
         <geometry>
-          <cylinder radius="0.04" length="0.160"/>
+          <cylinder radius="0.04" length="0.133"/>
         </geometry>
         <material name="eoat_black"/>
       </visual>
       <collision>
         <origin xyz="0 0 0.080"/>
         <geometry>
-          <cylinder radius="0.04" length="0.160"/>
+          <cylinder radius="0.04" length="0.133"/>
         </geometry>
       </collision>
       <inertial>
