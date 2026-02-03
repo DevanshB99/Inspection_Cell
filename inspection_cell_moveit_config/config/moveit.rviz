@@ -4,15 +4,13 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
-        - /Pose1
-        - /Marker2
+        - /Camera1
       Splitter Ratio: 0.5
-    Tree Height: 203
+    Tree Height: 304
   - Class: rviz_common/Help
     Name: Help
   - Class: rviz_common/Views
@@ -95,6 +93,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
           eoat_camera_link:
             Alpha: 1
             Show Axes: false
@@ -256,6 +255,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
+            Value: true
           eoat_camera_link:
             Alpha: 1
             Show Axes: false
@@ -358,7 +358,7 @@ Visualization Manager:
       Axes Radius: 0.009999999776482582
       Class: rviz_default_plugins/Pose
       Color: 255; 25; 0
-      Enabled: true
+      Enabled: false
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: Pose
@@ -372,19 +372,19 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /orientation_controller/eoat_desired_pose_in_eoat_camera_link
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/Axes
-      Enabled: true
+      Enabled: false
       Length: 0.20000000298023224
       Name: Axes
       Radius: 0.009999999776482582
       Reference Frame: eoat_camera_link
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: -9999
-        Min Value: 9999
+        Max Value: 0.3037620186805725
+        Min Value: 0.27876201272010803
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -419,7 +419,7 @@ Visualization Manager:
       Axes Radius: 0.009999999776482582
       Class: rviz_default_plugins/Pose
       Color: 255; 25; 0
-      Enabled: true
+      Enabled: false
       Head Length: 0.30000001192092896
       Head Radius: 0.10000000149011612
       Name: Pose
@@ -433,7 +433,7 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /orientation_controller/crop_normal
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/Camera
       Enabled: true
       Far Plane Distance: 100
@@ -451,10 +451,10 @@ Visualization Manager:
         Axes: true
         Grid: true
         Image: true
-        Marker: true
         MotionPlanning: true
         PointCloud2: true
         Pose: true
+        TF: true
         Value: true
         Wrench: true
       Zoom Factor: 1
@@ -510,31 +510,137 @@ Visualization Manager:
       Torque Arrow Scale: 0.10000000149011612
       Torque Color: 204; 204; 51
       Value: true
-    - Class: rviz_default_plugins/Marker
+    - Class: rviz_default_plugins/TF
       Enabled: true
-      Name: Marker
-      Namespaces:
-        bbox: true
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /viewpoint_generation/bounding_box_marker
-      Value: true
-    - Class: rviz_default_plugins/Marker
-      Enabled: true
-      Name: Marker
-      Namespaces:
-        {}
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /viewpoint_generation/planning_volume_marker
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        base:
+          Value: false
+        base_link_inertia:
+          Value: false
+        camera_aligned_depth_to_infra1_frame:
+          Value: false
+        camera_color_frame:
+          Value: false
+        camera_color_optical_frame:
+          Value: false
+        camera_depth_frame:
+          Value: false
+        camera_depth_optical_frame:
+          Value: false
+        camera_infra1_frame:
+          Value: false
+        camera_infra1_optical_frame:
+          Value: false
+        camera_infra2_frame:
+          Value: false
+        camera_infra2_optical_frame:
+          Value: false
+        camera_link:
+          Value: false
+        eoat_base_link:
+          Value: false
+        eoat_body_link:
+          Value: false
+        eoat_camera_link:
+          Value: true
+        eoat_top_link:
+          Value: false
+        flange:
+          Value: false
+        forearm_link:
+          Value: false
+        ft_frame:
+          Value: false
+        object_frame:
+          Value: false
+        planning_volume:
+          Value: false
+        shoulder_link:
+          Value: false
+        surface_target:
+          Value: true
+        table_link:
+          Value: false
+        tool0:
+          Value: false
+        turntable_base:
+          Value: false
+        turntable_base_link:
+          Value: false
+        turntable_base_link_inertia:
+          Value: false
+        turntable_disc_link:
+          Value: false
+        upper_arm_link:
+          Value: false
+        ur5e_mount_link:
+          Value: false
+        ur_base_link:
+          Value: false
+        wrist_1_link:
+          Value: false
+        wrist_2_link:
+          Value: false
+        wrist_3_link:
+          Value: false
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: false
+      Tree:
+        object_frame:
+          surface_target:
+            {}
+          turntable_disc_link:
+            turntable_base_link_inertia:
+              turntable_base_link:
+                planning_volume:
+                  {}
+                turntable_base:
+                  {}
+                ur5e_mount_link:
+                  table_link:
+                    {}
+                  ur_base_link:
+                    base:
+                      {}
+                    base_link_inertia:
+                      shoulder_link:
+                        upper_arm_link:
+                          forearm_link:
+                            wrist_1_link:
+                              wrist_2_link:
+                                wrist_3_link:
+                                  flange:
+                                    tool0:
+                                      eoat_base_link:
+                                        camera_link:
+                                          camera_aligned_depth_to_infra1_frame:
+                                            camera_infra1_optical_frame:
+                                              {}
+                                          camera_color_frame:
+                                            camera_color_optical_frame:
+                                              {}
+                                          camera_depth_frame:
+                                            camera_depth_optical_frame:
+                                              {}
+                                          camera_infra1_frame:
+                                            {}
+                                          camera_infra2_frame:
+                                            camera_infra2_optical_frame:
+                                              {}
+                                        eoat_body_link:
+                                          {}
+                                        eoat_camera_link:
+                                          {}
+                                        eoat_top_link:
+                                          {}
+                                  ft_frame:
+                                    {}
+      Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
@@ -554,32 +660,32 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.4447436332702637
+      Distance: 0.9643535614013672
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.2986311912536621
-        Y: -0.07183562219142914
-        Z: -0.2988676428794861
+        X: 0.06442601978778839
+        Y: 0.011569385416805744
+        Z: 0.15078988671302795
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.3249990940093994
+      Pitch: 0.7399992942810059
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.028851270675659
+      Yaw: 1.05385422706604
     Saved: ~
 Window Geometry:
   Camera:
     collapsed: false
   Displays:
     collapsed: false
-  Height: 1016
+  Height: 1372
   Help:
     collapsed: false
   Hide Left Dock: false
@@ -590,9 +696,9 @@ Window Geometry:
     collapsed: true
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002ac000003a2fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b00000106000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d00650072006101000001470000013e0000002800fffffffb0000000a0049006d006100670065010000028b000001520000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff000004ce000003a200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000200000000000002ea00000506fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000003f00fffffffb000000100044006900730070006c006100790073010000003b0000016b000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d00650072006101000001ac000001ba0000002800fffffffb0000000a0049006d006100670065010000036c000001d50000002800ffffff00000001000001c900000355fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067000000003b000003550000016900ffffff000007100000050600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 1920
-  X: 0
-  Y: 27
+  Width: 2560
+  X: 1920
+  Y: 68
