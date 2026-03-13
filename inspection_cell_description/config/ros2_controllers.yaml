@@ -40,6 +40,10 @@ controller_manager:
     ur5e_forward_position_controller:
       type: position_controllers/JointGroupPositionController  
 
+    # Ur5e-only forward velocity controller (6 DOF)
+    ur5e_forward_velocity_controller:
+      type: velocity_controllers/JointGroupVelocityController  
+
     # DEFAULT CONTROLLERS FOR UR5e (FOR REFERENCE)
     io_and_status_controller:
       type: ur_controllers/GPIOController
@@ -55,9 +59,6 @@ controller_manager:
 
     scaled_joint_trajectory_controller:
       type: ur_controllers/ScaledJointTrajectoryController
-
-    forward_velocity_controller:
-      type: velocity_controllers/JointGroupVelocityController
 
     forward_position_controller:
       type: position_controllers/JointGroupPositionController
@@ -180,6 +181,18 @@ ur5e_forward_position_controller:
       - wrist_3_joint          
     interface_name: position       
 
+# Ur5e-only forward velocity controller (6 DOF)
+ur5e_forward_velocity_controller:
+  ros__parameters:
+    joints:  
+      - shoulder_pan_joint      
+      - shoulder_lift_joint       
+      - elbow_joint            
+      - wrist_1_joint          
+      - wrist_2_joint          
+      - wrist_3_joint          
+    interface_name: velocity     
+
 # ====== DEFAULT CONTROLLERS FOR UR5e (FOR REFERENCE) ======
 
 speed_scaling_state_broadcaster:
@@ -284,17 +297,6 @@ passthrough_trajectory_controller:
       - position
       - velocity
     speed_scaling_interface_name: $(var tf_prefix)speed_scaling/speed_scaling_factor
-
-forward_velocity_controller:
-  ros__parameters:
-    joints:
-      - $(var tf_prefix)shoulder_pan_joint
-      - $(var tf_prefix)shoulder_lift_joint
-      - $(var tf_prefix)elbow_joint
-      - $(var tf_prefix)wrist_1_joint
-      - $(var tf_prefix)wrist_2_joint
-      - $(var tf_prefix)wrist_3_joint
-    interface_name: velocity
 
 force_mode_controller:
   ros__parameters:

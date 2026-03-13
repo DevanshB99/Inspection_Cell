@@ -263,7 +263,8 @@ def launch_setup(context):
         # "force_torque_sensor_broadcaster",
         # "tcp_pose_broadcaster",
         # "ur_configuration_controller",
-        "ur5e_forward_position_controller",
+        # "ur5e_forward_position_controller",
+        "ur5e_forward_velocity_controller",
         "turntable_forward_position_controller",
     ]
     controllers_inactive = [
@@ -327,7 +328,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "initial_joint_controller",
-            default_value="ur5e_forward_position_controller",
+            default_value="ur5e_forward_velocity_controller",
             description="Activate loaded joint controller.",
         ),
         DeclareLaunchArgument("safety_limits", default_value="true",
