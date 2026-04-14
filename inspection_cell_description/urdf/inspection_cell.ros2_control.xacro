@@ -415,7 +415,7 @@
           <plugin>turntable_hardware_interface/TurntableSystem</plugin>
           <param name="publish_command">1</param>
           <param name="target_angle_topic">/target_angle</param>
-          <param name="joint_state_topic">/turntables/joint_states</param>
+          <param name="joint_state_topic">/joint_states</param>
           <param name="headless_mode">${headless_mode}</param>
         </xacro:unless>
       </hardware>
