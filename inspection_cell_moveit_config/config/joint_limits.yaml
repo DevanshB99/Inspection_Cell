@@ -4,9 +4,9 @@ joint_limits:
     max_position: 3.1415
     min_position: -3.1415
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
   shoulder_pan_joint:
@@ -14,9 +14,9 @@ joint_limits:
     min_position: -1.57
     max_position: 1.57
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
   shoulder_lift_joint:
@@ -24,9 +24,9 @@ joint_limits:
     min_position: -2.0943951
     max_position: -1.04719755
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
   elbow_joint:
@@ -34,9 +34,9 @@ joint_limits:
     min_position: 0.78539816
     max_position: 2.35619449
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
   wrist_1_joint:
@@ -44,9 +44,9 @@ joint_limits:
     min_position: -3.14159265
     max_position: 0.0
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
   wrist_2_joint:
@@ -54,18 +54,18 @@ joint_limits:
     min_position: -2.35619449
     max_position: -0.785398164
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
   wrist_3_joint:
     has_position_limits: true
-    min_position: -1.57079633
-    max_position: 1.57079633
+    min_position: -6.28318530
+    max_position: 6.28318530
     has_velocity_limits: true
-    max_velocity: 1.57
+    max_velocity: 0.5
     has_acceleration_limits: true
-    max_acceleration: 5.0
+    max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
