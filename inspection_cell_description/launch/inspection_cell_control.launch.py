@@ -151,6 +151,8 @@ def launch_setup(context):
         output="screen",
         remappings=[
             ("/controller_manager/robot_description", "/robot_description")],
+        respawn=True,
+        respawn_delay=3.0,
     )
 
     # ================================================================
