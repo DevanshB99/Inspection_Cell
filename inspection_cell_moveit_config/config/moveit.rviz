@@ -3,14 +3,9 @@ Panels:
     Help Height: 0
     Name: Displays
     Property Tree Widget:
-      Expanded:
-        - /TF1
-        - /TF1/Frames1
-        - /MarkerArray1
+      Expanded: ~
       Splitter Ratio: 0.5
-    Tree Height: 374
-  - Class: rviz_common/Help
-    Name: Help
+    Tree Height: 350
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -36,6 +31,96 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base:
+          Value: true
+        base_link_inertia:
+          Value: true
+        camera_link:
+          Value: true
+        eoat_base_link:
+          Value: true
+        eoat_camera_link:
+          Value: true
+        flange:
+          Value: true
+        forearm_link:
+          Value: true
+        ft_frame:
+          Value: true
+        object_frame:
+          Value: true
+        planning_volume:
+          Value: true
+        shoulder_link:
+          Value: true
+        table_link:
+          Value: true
+        tool0:
+          Value: true
+        turntable_base:
+          Value: true
+        turntable_base_link:
+          Value: true
+        turntable_base_link_inertia:
+          Value: true
+        turntable_disc_link:
+          Value: true
+        upper_arm_link:
+          Value: true
+        ur5e_mount_link:
+          Value: true
+        ur_base_link:
+          Value: true
+        wrist_1_link:
+          Value: true
+        wrist_2_link:
+          Value: true
+        wrist_3_link:
+          Value: true
+      Marker Scale: 0.5
+      Name: TF
+      Show Arrows: false
+      Show Axes: true
+      Show Names: false
+      Tree:
+        object_frame:
+          turntable_disc_link:
+            turntable_base_link_inertia:
+              turntable_base_link:
+                planning_volume:
+                  {}
+                turntable_base:
+                  {}
+                ur5e_mount_link:
+                  table_link:
+                    {}
+                  ur_base_link:
+                    base:
+                      {}
+                    base_link_inertia:
+                      shoulder_link:
+                        upper_arm_link:
+                          forearm_link:
+                            wrist_1_link:
+                              wrist_2_link:
+                                wrist_3_link:
+                                  flange:
+                                    tool0:
+                                      eoat_base_link:
+                                        eoat_camera_link:
+                                          camera_link:
+                                            {}
+                                  ft_frame:
+                                    {}
+      Update Interval: 0
       Value: true
     - Class: moveit_rviz_plugin/PlanningScene
       Enabled: true
@@ -76,18 +161,7 @@ Visualization Manager:
             Alpha: 1
             Show Axes: false
             Show Trail: false
-            Value: true
-          eoat_body_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           eoat_camera_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          eoat_top_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -178,310 +252,6 @@ Visualization Manager:
         Show Robot Collision: false
         Show Robot Visual: true
       Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 0.3557620048522949
-        Min Value: 0.3247619867324829
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz_default_plugins/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: AxisColor
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera/d405_camera/depth/fov_points_eoat_camera_link_bbox
-      Use Fixed Frame: false
-      Use rainbow: true
-      Value: true
-    - Class: rviz_default_plugins/Camera
-      Enabled: true
-      Far Plane Distance: 100
-      Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /camera/d405_camera/color/image_rect_raw
-      Value: true
-      Visibility:
-        Grid: true
-        Image: true
-        MarkerArray: true
-        PlanningScene: true
-        PointCloud2: true
-        Pose: true
-        TF: true
-        Value: true
-        Wrench: true
-      Zoom Factor: 1
-    - Class: rviz_default_plugins/Image
-      Enabled: true
-      Max Value: 1
-      Median window: 5
-      Min Value: 0
-      Name: Image
-      Normalize Range: true
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /particle_filter/depth/synthetic
-      Value: true
-    - Accept NaN Values: false
-      Alpha: 1
-      Arrow Width: 0.5
-      Class: rviz_default_plugins/Wrench
-      Enabled: true
-      Force Arrow Scale: 0.009999999776482582
-      Force Color: 204; 51; 51
-      History Length: 1
-      Name: Wrench
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /teleop/wrench_cmds
-      Torque Arrow Scale: 0.009999999776482582
-      Torque Color: 204; 204; 51
-      Value: true
-    - Accept NaN Values: false
-      Alpha: 1
-      Arrow Width: 0.10000000149011612
-      Class: rviz_default_plugins/Wrench
-      Enabled: true
-      Force Arrow Scale: 2
-      Force Color: 204; 51; 51
-      History Length: 1
-      Name: Wrench
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /orientation_controller/wrench_cmds
-      Torque Arrow Scale: 0.10000000149011612
-      Torque Color: 204; 204; 51
-      Value: true
-    - Class: rviz_default_plugins/TF
-      Enabled: true
-      Frame Timeout: 15
-      Frames:
-        All Enabled: false
-        base:
-          Value: false
-        base_link_inertia:
-          Value: false
-        camera_aligned_depth_to_infra1_frame:
-          Value: false
-        camera_color_frame:
-          Value: false
-        camera_color_optical_frame:
-          Value: false
-        camera_depth_frame:
-          Value: false
-        camera_depth_optical_frame:
-          Value: false
-        camera_infra1_frame:
-          Value: false
-        camera_infra1_optical_frame:
-          Value: false
-        camera_infra2_frame:
-          Value: false
-        camera_infra2_optical_frame:
-          Value: false
-        camera_link:
-          Value: false
-        eoat_base_link:
-          Value: false
-        eoat_body_link:
-          Value: false
-        eoat_camera_link:
-          Value: true
-        eoat_top_link:
-          Value: false
-        flange:
-          Value: false
-        forearm_link:
-          Value: false
-        ft_frame:
-          Value: false
-        object_frame:
-          Value: true
-        planning_volume:
-          Value: false
-        shoulder_link:
-          Value: false
-        table_link:
-          Value: false
-        tool0:
-          Value: false
-        turntable_base:
-          Value: false
-        turntable_base_link:
-          Value: false
-        turntable_base_link_inertia:
-          Value: false
-        turntable_disc_link:
-          Value: true
-        upper_arm_link:
-          Value: false
-        ur5e_mount_link:
-          Value: false
-        ur_base_link:
-          Value: false
-        wrist_1_link:
-          Value: false
-        wrist_2_link:
-          Value: false
-        wrist_3_link:
-          Value: false
-      Marker Scale: 0.5
-      Name: TF
-      Show Arrows: false
-      Show Axes: true
-      Show Names: false
-      Tree:
-        object_frame:
-          turntable_disc_link:
-            turntable_base_link_inertia:
-              turntable_base_link:
-                planning_volume:
-                  {}
-                turntable_base:
-                  {}
-                ur5e_mount_link:
-                  table_link:
-                    {}
-                  ur_base_link:
-                    base:
-                      {}
-                    base_link_inertia:
-                      shoulder_link:
-                        upper_arm_link:
-                          forearm_link:
-                            wrist_1_link:
-                              wrist_2_link:
-                                wrist_3_link:
-                                  flange:
-                                    tool0:
-                                      eoat_base_link:
-                                        camera_link:
-                                          camera_aligned_depth_to_infra1_frame:
-                                            camera_infra1_optical_frame:
-                                              {}
-                                          camera_color_frame:
-                                            camera_color_optical_frame:
-                                              {}
-                                          camera_depth_frame:
-                                            camera_depth_optical_frame:
-                                              {}
-                                          camera_infra1_frame:
-                                            {}
-                                          camera_infra2_frame:
-                                            camera_infra2_optical_frame:
-                                              {}
-                                        eoat_body_link:
-                                          {}
-                                        eoat_camera_link:
-                                          {}
-                                        eoat_top_link:
-                                          {}
-                                  ft_frame:
-                                    {}
-      Update Interval: 0
-      Value: true
-    - Class: rviz_default_plugins/MarkerArray
-      Enabled: true
-      Name: MarkerArray
-      Namespaces:
-        {}
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /particle_filter/particle_markers
-      Value: true
-    - Alpha: 1
-      Axes Length: 0.10000000149011612
-      Axes Radius: 0.009999999776482582
-      Class: rviz_default_plugins/Pose
-      Color: 255; 25; 0
-      Enabled: true
-      Head Length: 0.30000001192092896
-      Head Radius: 0.10000000149011612
-      Name: Pose
-      Shaft Length: 1
-      Shaft Radius: 0.05000000074505806
-      Shape: Axes
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /particle_filter/pose
-      Value: true
-    - Alpha: 1
-      Autocompute Intensity Bounds: true
-      Autocompute Value Bounds:
-        Max Value: 0.2858361005783081
-        Min Value: 0.010017646476626396
-        Value: true
-      Axis: Z
-      Channel Name: intensity
-      Class: rviz_default_plugins/PointCloud2
-      Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 0
-      Enabled: true
-      Invert Rainbow: false
-      Max Color: 255; 255; 255
-      Max Intensity: 4096
-      Min Color: 0; 0; 0
-      Min Intensity: 0
-      Name: PointCloud2
-      Position Transformer: XYZ
-      Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.009999999776482582
-      Style: Flat Squares
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        Filter size: 10
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /particle_filter/observed_cloud
-      Use Fixed Frame: true
-      Use rainbow: true
-      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -500,41 +270,35 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.0679395198822021
+      Distance: 0.668788731098175
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.04311342164874077
-        Y: -0.05900810286402702
-        Z: -0.0006212523439899087
+        X: 0.27003681659698486
+        Y: -0.1958644837141037
+        Z: 0.43299221992492676
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7699986696243286
+      Pitch: 0.009999150410294533
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 1.915224313735962
+      Yaw: 1.655236840248108
     Saved: ~
 Window Geometry:
-  Camera:
-    collapsed: false
   Displays:
     collapsed: false
-  Height: 1372
-  Help:
-    collapsed: false
+  Height: 764
   Hide Left Dock: false
   Hide Right Dock: false
-  Image:
-    collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000200000000000002ea00000506fc0200000006fb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fb000000100044006900730070006c006100790073010000003b000001b1000000c700fffffffb0000000800480065006c0070000000029a0000006e0000006e00fffffffb0000000a00560069006500770073000000026f000000a0000000a000fffffffb0000000c00430061006d00650072006101000001f2000001980000002800fffffffb0000000a0049006d0061006700650100000390000001b10000002800ffffff00000001000001c900000506fc0200000001fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e0067010000003b000005060000000000000000000007100000050600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000001000000000000019b000002a6fc0200000002fb000000100044006900730070006c006100790073010000003b00000199000000c700fffffffb0000000a0056006900650077007301000001da00000107000000a000ffffff0000035f000002a600000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
-  Width: 2560
-  X: 1920
-  Y: 68
+  Width: 1280
+  X: 704
+  Y: 336
