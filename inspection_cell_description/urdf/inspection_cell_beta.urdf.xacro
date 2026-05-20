@@ -71,6 +71,7 @@
     trajectory_port:=50003
     non_blocking_read:=true
     keep_alive_count:=2
+    robot_receive_timeout:=0.04
     hash:=calib_unified_7dof_12345678901234567890
     ">
 
@@ -107,6 +108,7 @@
         trajectory_port="${trajectory_port}"
         non_blocking_read="${non_blocking_read}"
         keep_alive_count="${keep_alive_count}"
+        robot_receive_timeout="${robot_receive_timeout}"
         use_tool_communication="${use_tool_communication}"
         tool_voltage="${tool_voltage}"
         tool_parity="${tool_parity}"
@@ -722,7 +724,7 @@
     <joint name="${tf_prefix}camera_depth_optical_joint" type="fixed">
       <parent link="${tf_prefix}eoat_camera_link"/>
       <child link="${tf_prefix}camera_link"/>
-      <origin xyz="-0.0805 0.009 0.0984" rpy="${radians(90)} ${radians(-63.435)} ${radians(0)}"/>
+      <origin xyz="-0.0805 0.009 0.0984" rpy="${radians(0)} ${radians(-63.435)} ${radians(0)}"/>
     </joint>
 
     <!-- ================================================================ -->

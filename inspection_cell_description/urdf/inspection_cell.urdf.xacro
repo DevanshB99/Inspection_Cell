@@ -60,6 +60,7 @@
    <xacro:arg name="trajectory_port" default="50003"/>
    <xacro:arg name="non_blocking_read" default="true"/>
    <xacro:arg name="keep_alive_count" default="2"/>
+   <xacro:arg name="robot_receive_timeout" default="0.04"/>
    <xacro:arg name="hash" default="calib_unified_7dof_12345678901234567890"/>
 
    <!-- ================================================================ -->
@@ -170,6 +171,7 @@
      trajectory_port="$(arg trajectory_port)"
      non_blocking_read="$(arg non_blocking_read)"
      keep_alive_count="$(arg keep_alive_count)"
+     robot_receive_timeout="$(arg robot_receive_timeout)"
      hash="${hash}"
      >
      
