@@ -131,12 +131,12 @@
 
     <!-- Table Link - Static visualization reference -->
     <link name="${tf_prefix}table_link">
-      <visual>
+      <!-- <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
           <mesh filename="package://inspection_cell_description/meshes/visual/table.dae"/>
         </geometry>
-      </visual>
+      </visual> -->
       <collision>
         <origin xyz="1.2192 0.762 -0.4515" rpy="0 0 0"/>
         <geometry>
@@ -445,12 +445,12 @@
     </link>
 
     <link name="${tf_prefix}camera_link">
-      <visual>
+      <!-- <visual>
         <origin xyz="0 0 0" rpy="0 ${radians(90)} 0"/>
         <geometry>
           <cylinder radius="0.015" length="0.030"/>
         </geometry>
-      </visual>
+      </visual> -->
       <!-- <collision>
         <origin xyz="0 0 0" rpy="0 ${radians(90)} 0"/>
         <geometry>

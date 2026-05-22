@@ -4,11 +4,11 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /TF1/Frames1
         - /Camera1/Topic1
-        - /PointCloud21
       Splitter Ratio: 0.5
-    Tree Height: 370
+    Tree Height: 140
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -21,7 +21,7 @@ Visualization Manager:
       Cell Size: 1
       Class: rviz_default_plugins/Grid
       Color: 160; 160; 164
-      Enabled: true
+      Enabled: false
       Line Style:
         Line Width: 0.029999999329447746
         Value: Lines
@@ -34,7 +34,7 @@ Visualization Manager:
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
-      Value: true
+      Value: false
     - Class: rviz_default_plugins/TF
       Enabled: true
       Filter (blacklist): ""
@@ -82,6 +82,8 @@ Visualization Manager:
           Value: false
         shoulder_link:
           Value: false
+        surface_normal:
+          Value: true
         table_link:
           Value: false
         tool0:
@@ -113,6 +115,8 @@ Visualization Manager:
       Show Names: false
       Tree:
         object_frame:
+          surface_normal:
+            {}
           turntable_disc_link:
             turntable_base_link_inertia:
               turntable_base_link:
@@ -296,7 +300,7 @@ Visualization Manager:
         Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
-        Reliability Policy: Reliable
+        Reliability Policy: Best Effort
         Value: /camera/d405_camera/color/image_raw
       Value: true
       Visibility:
@@ -304,19 +308,20 @@ Visualization Manager:
         PlanningScene: true
         PointCloud2: true
         TF: true
+        TwistStamped: true
         Value: true
       Zoom Factor: 1
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
+        Max Value: 0.09203583002090454
+        Min Value: 0.06971997022628784
         Value: true
-      Axis: Z
+      Axis: X
       Channel Name: intensity
       Class: rviz_default_plugins/PointCloud2
       Color: 255; 255; 255
-      Color Transformer: ""
+      Color Transformer: AxisColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -325,7 +330,7 @@ Visualization Manager:
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: PointCloud2
-      Position Transformer: ""
+      Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
@@ -339,9 +344,28 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 1
+      Angular Arrow Scale: 2
+      Angular Color: 204; 204; 51
+      Arrow Width: 0.5
+      Class: rviz_default_plugins/TwistStamped
+      Enabled: true
+      Hide Small Values: true
+      History Length: 1
+      Linear Arrow Scale: 2
+      Linear Color: 51; 204; 204
+      Name: TwistStamped
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /servo_node/delta_twist_cmds
+      Value: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
+    Background Color: 255; 255; 255
     Fixed Frame: object_frame
     Frame Rate: 30
   Name: root
@@ -357,25 +381,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 1.4615585803985596
+      Distance: 0.959126889705658
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.11394776403903961
-        Y: -0.048343509435653687
-        Z: 0.1146099716424942
+        X: 0.17826277017593384
+        Y: -0.02440190501511097
+        Z: 0.07361268997192383
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8099991679191589
+      Pitch: 0.08979661017656326
       Target Frame: object_frame
       Value: Orbit (rviz_default_plugins)
-      Yaw: 2.975247383117676
+      Yaw: 2.3498051166534424
     Saved: ~
 Window Geometry:
   Camera:
@@ -385,7 +409,7 @@ Window Geometry:
   Height: 1044
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd0000000100000000000001c9000003befc0200000003fb000000100044006900730070006c006100790073010000003b000001ad000000c700fffffffb0000000a0056006900650077007301000001ee00000103000000a000fffffffb0000000c00430061006d00650072006101000002f7000001020000001600ffffff000005b1000003be00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000100000000000001c9000003befc0200000004fb000000100044006900730070006c006100790073010000003b000000c7000000c700fffffffb0000000a005600690065007700730100000108000000c7000000a000fffffffb0000000c00430061006d00650072006101000001d5000002240000001600fffffffb0000000a0049006d006100670065000000034c0000009d0000000000000000000005b1000003be00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Views:
     collapsed: false
   Width: 1920

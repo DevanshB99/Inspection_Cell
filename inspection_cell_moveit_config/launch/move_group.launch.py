@@ -81,7 +81,7 @@ def launch_setup(context):
             moveit_config.robot_description_kinematics,
             moveit_config.joint_limits
         ],
-        arguments=['--ros-args', '--log-level', 'ERROR']
+        arguments=['--ros-args', '--log-level', 'INFO']
     )
 
     return [  # move_group_node,
