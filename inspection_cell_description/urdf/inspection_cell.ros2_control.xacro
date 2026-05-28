@@ -3,7 +3,8 @@
 
   <xacro:macro name="inspection_cell_ros2_control" params="
     name
-    use_fake_hardware:=false 
+    sim:=false
+    use_fake_hardware:=false
     mock_sensor_commands:=false
     sim_gazebo:=false
     sim_ignition:=false
@@ -84,83 +85,119 @@
         <command_interface name="position"/>
         <command_interface name="velocity"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['shoulder_pan_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['shoulder_pan_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="effort">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
-      
+
       <joint name="${tf_prefix}shoulder_lift_joint">
         <command_interface name="position"/>
         <command_interface name="velocity"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['shoulder_lift_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['shoulder_lift_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="effort">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
-      
+
       <joint name="${tf_prefix}elbow_joint">
         <command_interface name="position"/>
         <command_interface name="velocity"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['elbow_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['elbow_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="effort">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
-      
+
       <joint name="${tf_prefix}wrist_1_joint">
         <command_interface name="position"/>
         <command_interface name="velocity"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['wrist_1_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['wrist_1_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="effort">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
-      
+
       <joint name="${tf_prefix}wrist_2_joint">
         <command_interface name="position"/>
         <command_interface name="velocity"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['wrist_2_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['wrist_2_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="effort">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
-      
+
       <joint name="${tf_prefix}wrist_3_joint">
         <command_interface name="position"/>
         <command_interface name="velocity"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['wrist_3_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['wrist_3_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="effort">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
 
@@ -426,10 +463,14 @@
       <joint name="${tf_prefix}turntable_disc_joint">
         <command_interface name="position"/>
         <state_interface name="position">
-          <param name="initial_value">${initial_positions['turntable_disc_joint']}</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">${initial_positions['turntable_disc_joint']}</param>
+          </xacro:if>
         </state_interface>
         <state_interface name="velocity">
-          <param name="initial_value">0.0</param>
+          <xacro:if value="${sim}">
+            <param name="initial_value">0.0</param>
+          </xacro:if>
         </state_interface>
       </joint>
 
