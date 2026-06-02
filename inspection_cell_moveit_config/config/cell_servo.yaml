@@ -1,89 +1,69 @@
 ###############################################
-# Modify all parameters related to servoing here
+# MoveIt Servo 2.0 configuration (Jazzy)
 ###############################################
-use_gazebo: false # Whether the robot is started in a Gazebo simulation environment
 
-## Properties of incoming commands
-command_in_type: "speed_units"  # "unitless"> in the range [-1:1], as if from joystick. "speed_units"> cmds are in m/s and rad/s
+## MoveIt group
+move_group_name: ur5e
+active_subgroup: ""  # empty = use full move group
+
+## Incoming command topics and type
+cartesian_command_in_topic: ~/delta_twist_cmds
+joint_command_in_topic: ~/delta_joint_cmds
+pose_command_in_topic: ~/pose_target_cmds
+command_in_type: "speed_units"  # "unitless" [-1:1] or "speed_units" [m/s, rad/s]
 scale:
-  # Scale parameters are only used if command_in_type=="unitless"
-  linear: 1.0  # Max linear velocity. Meters per publish_period. Unit is [m/s]. Only used for Cartesian commands.
-  rotational: 3.0  # Max angular velocity. Rads per publish_period. Unit is [rad/s]. Only used for Cartesian commands.
-  # Max joint angular/linear velocity. Rads or Meters per publish period. Only used for joint commands on joint_command_in_topic.
-  joint: 0.01
-# This is a fudge factor to account for any latency in the system, e.g. network latency or poor low-level
-# controller performance. It essentially increases the timestep when calculating the target pose, to move the target
-# pose farther away. [seconds]
-system_latency_compensation: 0.00
+  linear: 1.0    # max linear velocity [m/s]
+  rotational: 3.0  # max angular velocity [rad/s]
+  joint: 0.01    # joint velocity scale (unitless mode only)
 
-## Properties of outgoing co mmands
-publish_period: 0.002  # 1/Nominal publish rate [seconds]
-low_latency_mode: false  # Set this to true to publish as soon as an incoming Twist command is received (publish_period is ignored)
+incoming_command_timeout: 0.1  # discard commands older than this [s]
 
-# What type of topic does your robot driver expect?
-# Currently supported are std_msgs/Float64MultiArray or trajectory_msgs/JointTrajectory
+## Twist frame: if true, angular velocity is applied about the EE frame axes
+apply_twist_commands_about_ee_frame: true
+
+## Timing
+publish_period: 0.002   # 1/publish_rate [s]
+max_expected_latency: 0.1  # max command-to-controller latency [s]
+
+## Outgoing command settings
 command_out_type: std_msgs/Float64MultiArray
-
-# What to publish? Can save some bandwidth as most robots only require positions or velocities
+command_out_topic: /ur5e_forward_velocity_controller/commands
+# command_out_topic: /inspection_cell_forward_position_controller/commands
+status_topic: ~/status
 publish_joint_positions: false
 publish_joint_velocities: true
 publish_joint_accelerations: false
 
-## Plugins for smoothing outgoing commands
+## Smoothing plugin
+## NOTE: butterworth_filter_coeff must be set as a top-level node param in the launch file
 use_smoothing: true
 smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
 
-# If is_primary_planning_scene_monitor is set to true, the Servo server's PlanningScene advertises the /get_planning_scene service,
-# which other nodes can use as a source for information about the planning environment.
-# NOTE: If a different node in your system is responsible for the "primary" planning scene instance (e.g. the MoveGroup node),
-# then is_primary_planning_scene_monitor needs to be set to false.
-is_primary_planning_scene_monitor: false
-
-## Incoming Joint State properties
-low_pass_filter_coeff: 10.0  # Larger --> trust the filtered data more, trust the measurements less.
-
-## MoveIt properties
-move_group_name: ur5e # Often 'manipulator' or 'arm'
-# move_group_name: disc_to_ur5e
-planning_frame: ur_base_link # The MoveIt planning frame. Often 'base_link' or 'world'
-# planning_frame: object_frame
-
-## Other frames
-ee_frame_name: eoat_camera_link # The name of the end effector link, used to return the EE pose
-robot_link_command_frame: eoat_camera_link # commands must be given in the frame of a robot link. Usually either the base or end effector
-
-## Stopping behaviour
-incoming_command_timeout: 0.1  # Stop servoing if X seconds elapse without a new command
-# If 0, republish commands forever even if the robot is stationary. Otherwise, specify num. to publish.
-# Important because ROS may drop some messages and we need the robot to halt reliably.
-num_outgoing_halt_msgs_to_publish: 4
-
-## Configure handling of singularities and joint limits
-lower_singularity_threshold: 170000000000000000.0  # Start decelerating when the condition number hits this (close to singularity)
-hard_stop_singularity_threshold: 3000000000000000000000000.0  # Stop when the condition number hits this
-
-# added as a buffer to joint limits [radians]. If moving quickly, make this larger.
-joint_limit_margins: [0.02]
-
-## Topic names
-cartesian_command_in_topic: ~/delta_twist_cmds  # Topic for incoming Cartesian twist commands
-joint_command_in_topic: ~/delta_joint_cmds  # Topic for incoming joint angle commands
+## Planning scene monitor
 joint_topic: /joint_states
-status_topic: ~/status  # Publish status to this topic
-command_out_topic: /ur5e_forward_velocity_controller/commands  # Publish outgoing commands here
-# command_out_topic: /inspection_cell_forward_position_controller/commands  # Publish outgoing commands here
+is_primary_planning_scene_monitor: false
+monitored_planning_scene_topic: /planning_scene
+check_octomap_collisions: false
 
-## Collision checking for the entire robot body
-check_collisions: false # Check collisions?
-collision_check_rate: 5.0  # [Hz] Collision-checking can easily bog down a CPU if done too often.
-# Two collision check algorithms are available: "threshold_distance" begins slowing down when
-# nearer than a specified distance. Good if you want to tune collision thresholds manually.
-# "stop_distance" stops if a collision is nearer than the worst-case stopping distance and the
-# distance is decreasing. Requires joint acceleration limits
-collision_check_type: threshold_distance
-# Parameters for "threshold_distance"-type collision checking
-self_collision_proximity_threshold: 0.01  # Start decelerating when a self-collision is this far [m]
-scene_collision_proximity_threshold: 0.02  # Start decelerating when a scene collision is this far [m]
-# Parameters for "stop_distance"-type collision checking
-collision_distance_safety_factor: 1.0  # Must be >= 1. A large safety factor is recommended to account for latency
-min_allowable_collision_distance: 0.01  # Stop if a collision is closer than this [m]
+## Collision checking
+check_collisions: false
+collision_check_rate: 5.0
+self_collision_proximity_threshold: 0.01
+scene_collision_proximity_threshold: 0.02
+
+## Singularity handling
+lower_singularity_threshold: 17.0
+hard_stop_singularity_threshold: 30.0
+leaving_singularity_threshold_multiplier: 2.0
+singularity_step_scale: 0.01
+override_velocity_scaling_factor: 0.0
+
+## Joint limiting
+joint_limit_margins: [0.02]
+halt_all_joints_in_cartesian_mode: true
+halt_all_joints_in_joint_mode: true
+
+## Pose tracking tolerances
+pose_tracking:
+  linear_tolerance: 0.001
+  angular_tolerance: 0.01

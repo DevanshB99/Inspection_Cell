@@ -76,6 +76,7 @@ def launch_setup(context):
         name="servo_node",
         parameters=[
             servo_params,
+            {"butterworth_filter_coeff": 10.0},
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
@@ -84,9 +85,20 @@ def launch_setup(context):
         arguments=['--ros-args', '--log-level', 'INFO']
     )
 
+    # Delay servo startup so the planning scene (published by move_group) has
+    # time to be updated from /joint_states before servo processes its first
+    # command. Without this delay, servo sees the planning scene at all-zeros
+    # (UR5e elbow=0, wrist_2=0 are exact singularities) and computes a
+    # degenerate Jacobian on its first cycle, driving the robot into a real
+    # singularity before the scene is corrected.
+    servo_node_delayed = TimerAction(
+        period=10.0,
+        actions=[servo_node]
+    )
+
     return [  # move_group_node,
         move_group_launch,
-        servo_node,
+        servo_node_delayed,
         rviz_launch,
     ]
 
