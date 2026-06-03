@@ -36,17 +36,26 @@ publish_joint_accelerations: false
 
 ## Smoothing plugin
 ## NOTE: butterworth_filter_coeff must be set as a top-level node param in the launch file
+## DIAGNOSTIC: temporarily disabled. The Butterworth smoother is never reset between
+## commands (Servo::resetSmoothing is never called in servo.cpp), so stale filter state
+## from an idle period can leak into the first active command, where it is divided by
+## publish_period (0.002) -> huge velocity. Flip back to true once root cause confirmed.
 use_smoothing: true
 smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
 
 ## Planning scene monitor
 joint_topic: /joint_states
-is_primary_planning_scene_monitor: false
+# Servo owns its current-state tracking: it runs its own CurrentStateMonitor directly
+# off /joint_states instead of waiting on move_group's /planning_scene updates. Without
+# this the servo's internal robot state stayed at the all-zeros startup config (UR5e
+# elbow=0 & wrist_2=0 are exact singularities), so its first IK call hit a degenerate
+# Jacobian and saturated every joint at +/-pi regardless of the commanded twist.
+is_primary_planning_scene_monitor: true
 monitored_planning_scene_topic: /planning_scene
 check_octomap_collisions: false
 
 ## Collision checking
-check_collisions: false
+check_collisions: true
 collision_check_rate: 5.0
 self_collision_proximity_threshold: 0.01
 scene_collision_proximity_threshold: 0.02
