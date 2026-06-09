@@ -32,6 +32,10 @@ def generate_launch_description():
                               description="Launch RViz for visualization."),
         DeclareLaunchArgument("launch_moveit", default_value="true",
                               description="Launch MoveIt for motion planning."),
+        DeclareLaunchArgument("rviz_config", default_value="",
+                              description="Absolute path to an RViz config file for the "
+                              "MoveIt RViz instance. If empty, the moveit_config default "
+                              "(config/moveit.rviz) is used."),
     ]
 
     cell = LaunchConfiguration("cell")
@@ -80,7 +84,7 @@ def generate_launch_description():
             "use_fake_hardware": LaunchConfiguration("use_fake_hardware"),
             "mock_sensor_commands": LaunchConfiguration("mock_sensor_commands"),
             "headless_mode": LaunchConfiguration("headless_mode"),
-
+            "rviz_config": LaunchConfiguration("rviz_config"),
         }.items(),
         condition=IfCondition(launch_moveit)
     )

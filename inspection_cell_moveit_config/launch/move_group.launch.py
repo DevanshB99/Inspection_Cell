@@ -15,7 +15,6 @@ from launch.actions import TimerAction
 def launch_setup(context):
     # Get the actual cell value at launch time
     cell = LaunchConfiguration("cell").perform(context)
-    launch_rviz = LaunchConfiguration("launch_rviz")
 
     xacro_mappings = {
         'cell': LaunchConfiguration("cell").perform(context),
@@ -55,14 +54,29 @@ def launch_setup(context):
 
     move_group_launch = generate_move_group_launch(moveit_config)
 
-    rviz_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([
-            PathJoinSubstitution([
-                FindPackageShare("inspection_cell_moveit_config"),
-                "launch", "moveit_rviz.launch.py"
-            ])
-        ]),
-        launch_arguments={'log_level': 'ERROR'}.items()
+    # Resolve the RViz config: use the explicitly passed file if given, otherwise
+    # fall back to this package's default moveit.rviz (same default that
+    # moveit_rviz.launch.py / generate_moveit_rviz_launch uses).
+    rviz_config = LaunchConfiguration("rviz_config").perform(context)
+    if not rviz_config:
+        rviz_config = str(moveit_config.package_path / "config" / "moveit.rviz")
+
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        output="screen",
+        respawn=False,
+        arguments=["-d", rviz_config],
+        parameters=[
+            # NOTE: intentionally NOT passing moveit_config.planning_pipelines here.
+            # This file's moveit_config loads ompl+chomp+pilz, and launch_ros chokes
+            # on flattening that nested structure into rviz's param file, which makes
+            # the rviz node silently disappear from the launch. kinematics + joint
+            # limits are flat dicts and are what the MotionPlanning panel needs.
+            moveit_config.robot_description_kinematics,
+            moveit_config.joint_limits,
+        ],
     )
 
     # Get parameters for the Servo node
@@ -85,22 +99,10 @@ def launch_setup(context):
         arguments=['--ros-args', '--log-level', 'INFO']
     )
 
-    # Short startup delay so robot_state_publisher / controllers are up and
-    # /joint_states is flowing before servo starts. The servo is now the primary
-    # planning scene monitor (cell_servo.yaml: is_primary_planning_scene_monitor:
-    # true), so it seeds its own current state directly from /joint_states and no
-    # longer needs to wait for move_group to populate /planning_scene. (Previously
-    # a 10s delay was a band-aid for the servo's internal state being stuck at the
-    # all-zeros config, where UR5e elbow=0 & wrist_2=0 are exact singularities.)
-    servo_node_delayed = TimerAction(
-        period=2.0,
-        actions=[servo_node]
-    )
-
     return [  # move_group_node,
         move_group_launch,
-        servo_node_delayed,
-        rviz_launch,
+        rviz_node,
+        servo_node,
     ]
 
 
@@ -115,8 +117,9 @@ def generate_launch_description():
                 "mock_sensor_commands", default_value="false", description="Mock sensor commands"),
             DeclareLaunchArgument(
                 "headless_mode", default_value="false", description="Disable GUI"),
-            DeclareLaunchArgument("launch_rviz", default_value="true",
-                                  description="Launch RViz for visualization."),
+            DeclareLaunchArgument("rviz_config", default_value="",
+                                  description="Absolute path to an RViz config file. "
+                                  "If empty, defaults to this package's config/moveit.rviz."),
             OpaqueFunction(function=launch_setup)
         ]
     )
