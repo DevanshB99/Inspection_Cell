@@ -61,7 +61,7 @@
     tool_tx_idle_chars:=3.5
     tool_device_name:=/tmp/ttyUR
     tool_tcp_port:=54321
-    robot_ip:=192.168.0.112
+    robot_ip:=192.168.0.254
     script_filename:=to_be_filled_by_ur_robot_driver
     output_recipe_filename:=to_be_filled_by_ur_robot_driver
     input_recipe_filename:=to_be_filled_by_ur_robot_driver

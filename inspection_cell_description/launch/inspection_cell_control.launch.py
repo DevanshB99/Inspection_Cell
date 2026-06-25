@@ -164,7 +164,7 @@ def launch_setup(context):
     if cell.perform(context) == "alpha":
         robot_ip = "192.168.0.12"
     elif cell.perform(context) == "beta":
-        robot_ip = "192.168.0.112"
+        robot_ip = "192.168.0.254"
 
     dashboard_client_node = Node(
         package="ur_robot_driver",
