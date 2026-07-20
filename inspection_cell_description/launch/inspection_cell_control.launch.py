@@ -146,6 +146,20 @@ def launch_setup(context):
         # Load UR update rate configuration if not in simulation mode
         controller_params.insert(0, ur_update_rate_config)
 
+    # Real-time scheduling for the control loop. controller_manager applies
+    # these to its own process/update thread; lock_memory avoids swap-induced
+    # page-fault stalls, thread_priority runs the loop under SCHED_FIFO, and
+    # cpu_affinity (when >= 0) pins it to a core. See the DeclareLaunchArgument
+    # notes below.
+    rt_params = {
+        "lock_memory": LaunchConfiguration("control_lock_memory").perform(context).lower() in ("true", "1"),
+        "thread_priority": int(LaunchConfiguration("control_thread_priority").perform(context)),
+    }
+    cpu_affinity = int(LaunchConfiguration("control_cpu_affinity").perform(context))
+    if cpu_affinity >= 0:
+        rt_params["cpu_affinity"] = cpu_affinity
+    controller_params.append(rt_params)
+
     # ros2_control Node
     control_node = Node(
         package="controller_manager",
@@ -348,6 +362,24 @@ def generate_launch_description():
                               description="Launch RViz for visualization."),
         DeclareLaunchArgument("launch_moveit", default_value="true",
                               description="Launch MoveIt for motion planning."),
+        # --- Real-time tuning for the 100 Hz control loop -----------------
+        # These are read by controller_manager (ros2_control_node). They keep
+        # the update loop meeting its deadline even when the rest of the box is
+        # saturated (perception/planning). Safe defaults for the shared box;
+        # bump priority and pin cpu_affinity to an isolcpus core on a dedicated
+        # RT host. All degrade to a warning if the process lacks
+        # CAP_SYS_NICE / CAP_IPC_LOCK.
+        DeclareLaunchArgument(
+            "control_lock_memory", default_value="true",
+            description="mlockall() the control process so it never page-faults / "
+                        "swaps (prevents multi-ms stalls under memory pressure)."),
+        DeclareLaunchArgument(
+            "control_thread_priority", default_value="80",
+            description="SCHED_FIFO priority for the control update thread."),
+        DeclareLaunchArgument(
+            "control_cpu_affinity", default_value="-1",
+            description="Pin the control loop to this CPU core (-1 = don't pin). "
+                        "On a dedicated RT host set this to an isolcpus core."),
     ]
 
     return LaunchDescription(declared_arguments + [OpaqueFunction(function=launch_setup)])

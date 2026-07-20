@@ -9,16 +9,6 @@
     <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
     <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
     <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
-    <!--VIRTUAL JOINT, SPIKE (Phase B): object_frame stays the URDF's actual
-    root link (object_to_disc, object_frame to turntable_disc_link, is
-    still an ordinary fixed URDF joint, unchanged) so every existing
-    consumer keyed on the link name "object_frame" (planning-scene
-    attachment, this file's own disc_to_ur5e chain base_link, orientation
-    control's live TF lookups) keeps working untouched. "root" is a new,
-    external, not-a-URDF-link frame that exists only as this virtual
-    joint's parent; a runtime-sourced (TF) correction lands here instead,
-    the same pattern as a mobile-base map-to-base_link virtual joint. -->
-    <virtual_joint name="root_to_object" type="floating" parent_frame="root" child_link="object_frame"/>
     <group name="disc_to_ur5e">
         <joint name="turntable_disc_joint"/>
         <joint name="shoulder_pan_joint"/>

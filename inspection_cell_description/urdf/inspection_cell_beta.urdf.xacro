@@ -202,16 +202,16 @@
     <!-- UR5e Mount Block Link - 7" x 7" x 4.5" - FRAME AT BASE OF BLOCK -->
     <link name="${tf_prefix}ur5e_mount_link">
       <visual>
-        <origin xyz="0 0 0.05715" rpy="0 0 0"/>
+        <origin xyz="0 0 0.03375" rpy="0 0 0"/>
         <geometry>
-          <box size="0.1778 0.1778 0.1143"/>
+          <box size="0.1778 0.1778 0.0675"/>
         </geometry>
         <material name="mount_black"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0.05715" rpy="0 0 0"/>
+        <origin xyz="0 0 0.03375" rpy="0 0 0"/>
         <geometry>
-          <box size="0.1778 0.1778 0.1143"/>
+          <box size="0.1778 0.1778 0.0675"/>
         </geometry>
       </collision>
     </link>
@@ -555,7 +555,7 @@
     <joint name="${tf_prefix}mount_to_ur" type="fixed">
       <parent link="${tf_prefix}ur5e_mount_link"/>
       <child link="${tf_prefix}ur_base_link"/>
-      <origin xyz="0 0 0.0693" rpy="0 0 ${pi/2}"/>
+      <origin xyz="0 0 0.0675" rpy="0 0 ${pi/2}"/>
     </joint>
 
     <!-- UR Coordinate System Alignment -->

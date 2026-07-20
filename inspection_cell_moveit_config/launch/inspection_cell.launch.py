@@ -32,6 +32,11 @@ def generate_launch_description():
                               description="Launch RViz for visualization."),
         DeclareLaunchArgument("launch_moveit", default_value="true",
                               description="Launch MoveIt for motion planning."),
+        DeclareLaunchArgument("launch_control", default_value="true",
+                              description="Launch the ros2_control layer locally. Set "
+                              "false to run control on a dedicated real-time host "
+                              "(bring it up there with inspection_cell_control.launch.py) "
+                              "while this machine runs only MoveIt/perception."),
         DeclareLaunchArgument("rviz_config", default_value="",
                               description="Absolute path to an RViz config file for the "
                               "MoveIt RViz instance. If empty, the moveit_config default "
@@ -70,6 +75,7 @@ def generate_launch_description():
             "use_tool_communication": use_tool_communication,
             "launch_rviz": "false",
         }.items(),
+        condition=IfCondition(LaunchConfiguration("launch_control")),
     )
 
     moveit_launch = IncludeLaunchDescription(
