@@ -37,6 +37,13 @@ def generate_launch_description():
                               "false to run control on a dedicated real-time host "
                               "(bring it up there with inspection_cell_control.launch.py) "
                               "while this machine runs only MoveIt/perception."),
+        DeclareLaunchArgument("dual_arm", default_value="false",
+                              description="Add the second UR5e carrying the Zivid 2+ MR60 "
+                              "(cell beta only): URDF, controllers, MoveIt groups, Servo."),
+        DeclareLaunchArgument("launch_zivid", default_value="true",
+                              description="Start the Zivid camera driver when dual_arm:=true."),
+        DeclareLaunchArgument("zivid_serial_number", default_value=""),
+        DeclareLaunchArgument("zivid_settings_file", default_value=""),
         DeclareLaunchArgument("rviz_config", default_value="",
                               description="Absolute path to an RViz config file for the "
                               "MoveIt RViz instance. If empty, the moveit_config default "
@@ -74,6 +81,10 @@ def generate_launch_description():
             "safety_k_position": safety_k_position,
             "use_tool_communication": use_tool_communication,
             "launch_rviz": "false",
+            "dual_arm": LaunchConfiguration("dual_arm"),
+            "launch_zivid": LaunchConfiguration("launch_zivid"),
+            "zivid_serial_number": LaunchConfiguration("zivid_serial_number"),
+            "zivid_settings_file": LaunchConfiguration("zivid_settings_file"),
         }.items(),
         condition=IfCondition(LaunchConfiguration("launch_control")),
     )
@@ -91,6 +102,7 @@ def generate_launch_description():
             "mock_sensor_commands": LaunchConfiguration("mock_sensor_commands"),
             "headless_mode": LaunchConfiguration("headless_mode"),
             "rviz_config": LaunchConfiguration("rviz_config"),
+            "dual_arm": LaunchConfiguration("dual_arm"),
         }.items(),
         condition=IfCondition(launch_moveit)
     )

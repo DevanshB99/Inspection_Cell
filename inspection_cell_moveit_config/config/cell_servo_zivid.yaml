@@ -1,0 +1,80 @@
+# Servo for the second (Zivid) arm, dual_arm:=true. Copy of cell_servo.yaml with
+# only the move group and output controller changed; keep the two in sync.
+###############################################
+# MoveIt Servo 2.0 configuration (Jazzy)
+###############################################
+
+## MoveIt group
+move_group_name: zivid_ur5e
+active_subgroup: ""  # empty = use full move group
+
+## Incoming command topics and type
+cartesian_command_in_topic: ~/delta_twist_cmds
+joint_command_in_topic: ~/delta_joint_cmds
+pose_command_in_topic: ~/pose_target_cmds
+command_in_type: "speed_units"  # "unitless" [-1:1] or "speed_units" [m/s, rad/s]
+scale:
+  linear: 1.0    # max linear velocity [m/s]
+  rotational: 3.0  # max angular velocity [rad/s]
+  joint: 0.01    # joint velocity scale (unitless mode only)
+
+incoming_command_timeout: 0.1  # discard commands older than this [s]
+
+## Twist frame: if true, angular velocity is applied about the EE frame axes
+apply_twist_commands_about_ee_frame: true
+
+## Timing
+publish_period: 0.002   # 1/publish_rate [s]
+max_expected_latency: 0.1  # max command-to-controller latency [s]
+
+## Outgoing command settings
+command_out_type: std_msgs/Float64MultiArray
+command_out_topic: /zivid_ur5e_forward_velocity_controller/commands
+# command_out_topic: /inspection_cell_forward_position_controller/commands
+status_topic: ~/status
+publish_joint_positions: false
+publish_joint_velocities: true
+publish_joint_accelerations: false
+
+## Smoothing plugin
+## NOTE: butterworth_filter_coeff must be set as a top-level node param in the launch file
+## DIAGNOSTIC: temporarily disabled. The Butterworth smoother is never reset between
+## commands (Servo::resetSmoothing is never called in servo.cpp), so stale filter state
+## from an idle period can leak into the first active command, where it is divided by
+## publish_period (0.002) -> huge velocity. Flip back to true once root cause confirmed.
+use_smoothing: true
+smoothing_filter_plugin_name: "online_signal_smoothing::ButterworthFilterPlugin"
+
+## Planning scene monitor
+joint_topic: /joint_states
+# Servo owns its current-state tracking: it runs its own CurrentStateMonitor directly
+# off /joint_states instead of waiting on move_group's /planning_scene updates. Without
+# this the servo's internal robot state stayed at the all-zeros startup config (UR5e
+# elbow=0 & wrist_2=0 are exact singularities), so its first IK call hit a degenerate
+# Jacobian and saturated every joint at +/-pi regardless of the commanded twist.
+is_primary_planning_scene_monitor: true
+monitored_planning_scene_topic: /planning_scene
+check_octomap_collisions: false
+
+## Collision checking
+check_collisions: true
+collision_check_rate: 5.0
+self_collision_proximity_threshold: 0.01
+scene_collision_proximity_threshold: 0.02
+
+## Singularity handling
+lower_singularity_threshold: 17.0
+hard_stop_singularity_threshold: 30.0
+leaving_singularity_threshold_multiplier: 2.0
+singularity_step_scale: 0.01
+override_velocity_scaling_factor: 0.0
+
+## Joint limiting
+joint_limit_margins: [0.02]
+halt_all_joints_in_cartesian_mode: true
+halt_all_joints_in_joint_mode: true
+
+## Pose tracking tolerances
+pose_tracking:
+  linear_tolerance: 0.001
+  angular_tolerance: 0.01

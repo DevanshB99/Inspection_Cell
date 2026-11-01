@@ -1,0 +1,54 @@
+# Kinematics of the second UR5e (192.168.0.12).
+#
+# TODO: these are ur_description's NOMINAL UR5e values, not this robot's
+# factory calibration. Until they're replaced, its TF and FK will be off by a few
+# mm, and the UR driver will warn that the calibration hash doesn't match.
+# Extract the real values with:
+#   ros2 launch ur_calibration calibration_correction.launch.py \
+#     robot_ip:=192.168.0.12 target_filename:=<this file>
+# (ur_calibration 3.8.0 on Jazzy fails with "Stream is invalid. Connect it
+# before trying to read!" against both arms. It needs a fixed release.)
+kinematics:
+  shoulder:
+    x: 0
+    y: 0
+    z: 0.1625
+    roll: 0
+    pitch: 0
+    yaw: 0
+  upper_arm:
+    x: 0
+    y: 0
+    z: 0
+    roll: 1.570796327
+    pitch: 0
+    yaw: 0
+  forearm:
+    x: -0.425
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: 0
+  wrist_1:
+    x: -0.3922
+    y: 0
+    z: 0.1333
+    roll: 0
+    pitch: 0
+    yaw: 0
+  wrist_2:
+    x: 0
+    y: -0.0997
+    z: -2.044881182297852e-11
+    roll: 1.570796327
+    pitch: 0
+    yaw: 0
+  wrist_3:
+    x: 0
+    y: 0.09959999999999999
+    z: -2.042830148012698e-11
+    roll: 1.570796326589793
+    pitch: 3.141592653589793
+    yaw: 3.141592653589793
+  hash: calib_12788084448423163542

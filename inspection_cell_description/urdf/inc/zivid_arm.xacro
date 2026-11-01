@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <!--
+    Second UR5e (robot_ip 192.168.0.12) carrying a Zivid 2+ MR60, sharing the
+    turntable with the main arm. Enabled with dual_arm:=true.
+
+    Kinematic chain:
+      parent (main arm's ur5e_mount_link) → ${tf_prefix}ur5e_mount_link → ${tf_prefix}base_link
+        → ... → ${tf_prefix}tool0 → ${camera_prefix}base_link → ${camera_prefix}optical_frame
+
+    The arm comes from ur_description's ur_robot macro, the ros2_control block
+    from ur_robot_driver's ur_ros2_control macro, and the camera from
+    zivid_description's zivid_camera macro.
+
+    INCLUDE ORDER MATTERS: ur_macro.xacro pulls in ur_common.xacro, which
+    defines read_model_data/get_mesh/... under the same names as
+    inc/inspection_cell_common.xacro. Xacro macros are global and the last
+    definition wins, so this file must be included BEFORE the cell file. Then
+    both arms use the inspection-cell versions, a superset of UR's that also
+    reads the turntable limits.
+
+    The two block params are positional: pass two <origin .../> elements, mount
+    origin first, then camera origin. insert_block copies each element verbatim,
+    so they must be <origin> tags.
+  -->
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+  <xacro:include filename="$(find ur_robot_driver)/urdf/ur.ros2_control.xacro"/>
+  <xacro:include filename="$(find zivid_description)/urdf/macros/zivid_camera.xacro"/>
+
+  <xacro:macro name="zivid_arm" params="
+    tf_prefix
+    camera_prefix
+    parent
+    *mount_origin
+    *camera_origin
+    camera_model:=ZIVID_2_PLUS_MR60
+    generate_ros2_control_tag:=true
+    joint_limits_parameters_file
+    kinematics_parameters_file
+    physical_parameters_file
+    visual_parameters_file
+    initial_positions
+    safety_limits:=false
+    safety_pos_margin:=0.15
+    safety_k_position:=20
+    use_fake_hardware:=false
+    mock_sensor_commands:=false
+    headless_mode:=false
+    robot_ip
+    script_filename
+    output_recipe_filename
+    input_recipe_filename
+    reverse_ip:=0.0.0.0
+    reverse_port
+    script_sender_port
+    trajectory_port
+    script_command_port
+    non_blocking_read:=true
+    robot_receive_timeout:=0.04
+    use_tool_communication:=false
+    ">
+
+    <!-- Mount block, same 7" x 7" x 2.66" block as the main arm -->
+    <link name="${tf_prefix}ur5e_mount_link">
+      <visual>
+        <origin xyz="0 0 0.03375" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.1778 0.1778 0.0675"/>
+        </geometry>
+        <material name="mount_black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0.03375" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.1778 0.1778 0.0675"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${tf_prefix}base_to_ur_mount" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${tf_prefix}ur5e_mount_link"/>
+      <xacro:insert_block name="mount_origin"/>
+    </joint>
+
+    <!-- Same mount → base transform as the main arm (mount_to_ur) -->
+    <xacro:ur_robot
+      name="${tf_prefix}ur5e"
+      tf_prefix="${tf_prefix}"
+      parent="${tf_prefix}ur5e_mount_link"
+      joint_limits_parameters_file="${joint_limits_parameters_file}"
+      kinematics_parameters_file="${kinematics_parameters_file}"
+      physical_parameters_file="${physical_parameters_file}"
+      visual_parameters_file="${visual_parameters_file}"
+      safety_limits="${safety_limits}"
+      safety_pos_margin="${safety_pos_margin}"
+      safety_k_position="${safety_k_position}">
+      <origin xyz="0 0 0.0675" rpy="0 0 ${pi/2}"/>
+    </xacro:ur_robot>
+
+    <xacro:if value="${generate_ros2_control_tag}">
+      <xacro:ur_ros2_control
+        name="ZividUR5eSystem"
+        ur_type="ur5e"
+        tf_prefix="${tf_prefix}"
+        kinematics_parameters_file="${kinematics_parameters_file}"
+        initial_positions="${initial_positions}"
+        use_mock_hardware="${use_fake_hardware}"
+        mock_sensor_commands="${mock_sensor_commands}"
+        headless_mode="${headless_mode}"
+        robot_ip="${robot_ip}"
+        script_filename="${script_filename}"
+        output_recipe_filename="${output_recipe_filename}"
+        input_recipe_filename="${input_recipe_filename}"
+        reverse_ip="${reverse_ip}"
+        reverse_port="${reverse_port}"
+        script_sender_port="${script_sender_port}"
+        trajectory_port="${trajectory_port}"
+        script_command_port="${script_command_port}"
+        non_blocking_read="${non_blocking_read}"
+        robot_receive_timeout="${robot_receive_timeout}"
+        use_tool_communication="${use_tool_communication}"/>
+    </xacro:if>
+
+    <!-- Zivid 2+ MR60 on the flange -->
+    <xacro:zivid_camera prefix="${camera_prefix}" model="${camera_model}" field_of_view="false"/>
+
+    <joint name="${camera_prefix}mount_joint" type="fixed">
+      <parent link="${tf_prefix}tool0"/>
+      <child link="${camera_prefix}base_link"/>
+      <xacro:insert_block name="camera_origin"/>
+    </joint>
+
+  </xacro:macro>
+</robot>

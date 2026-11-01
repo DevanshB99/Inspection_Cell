@@ -25,6 +25,8 @@
   <!-- Component packages -->
   <build_depend>ur_description</build_depend>
   <exec_depend>turntable_description</exec_depend>
+  <exec_depend>ur_robot_driver</exec_depend>
+  <exec_depend>zivid_description</exec_depend>
   <exec_depend>inspection_eoat_description</exec_depend>
 
   <export>

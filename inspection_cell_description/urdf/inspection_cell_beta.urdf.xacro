@@ -545,10 +545,11 @@
     </joint>
 
     <!-- UR5e Mount - Connected via turntable base -->
+    <!-- Measured 2026-10-07 after the cell was reconfigured. -->
     <joint name="${tf_prefix}base_to_ur_mount" type="fixed">
       <parent link="${tf_prefix}turntable_base_link"/>
       <child link="${tf_prefix}ur5e_mount_link"/>
-      <origin xyz="0.762 0 0" rpy="0 0 0"/>
+      <origin xyz="0.5675 0.59 -0.045" rpy="0 0 0"/>
     </joint>
 
     <!-- UR5e Base - Mounted on mount block -->
