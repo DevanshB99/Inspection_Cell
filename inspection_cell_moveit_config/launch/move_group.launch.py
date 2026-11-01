@@ -15,13 +15,19 @@ from launch.actions import TimerAction
 def launch_setup(context):
     # Get the actual cell value at launch time
     cell = LaunchConfiguration("cell").perform(context)
+    dual_arm = LaunchConfiguration("dual_arm").perform(context).lower() == "true"
 
     xacro_mappings = {
         'cell': LaunchConfiguration("cell").perform(context),
         'use_fake_hardware': LaunchConfiguration("use_fake_hardware").perform(context),
         'mock_sensor_commands': LaunchConfiguration("mock_sensor_commands").perform(context),
         'headless_mode': LaunchConfiguration("headless_mode").perform(context),
+        'dual_arm': str(dual_arm).lower(),
     }
+
+    # dual_arm adds the zivid_ arm's groups/collision pairs on top of inspection_cell.srdf.
+    srdf_file = ("config/inspection_cell_dual.srdf.xacro" if dual_arm
+                 else "config/inspection_cell.srdf")
 
     joint_limits_file = PathJoinSubstitution([
         FindPackageShare("inspection_cell_description"),
@@ -36,7 +42,7 @@ def launch_setup(context):
         )
         .robot_description(
             mappings=xacro_mappings)
-        .robot_description_semantic(file_path="config/inspection_cell.srdf")
+        .robot_description_semantic(file_path=srdf_file)
         .moveit_cpp(file_path="config/motion_planning.yaml")
         .joint_limits(file_path=joint_limits_file)
         .planning_scene_monitor(
@@ -51,6 +57,12 @@ def launch_setup(context):
         )
         .to_moveit_configs()
     )
+
+    if dual_arm:
+        # zivid_inspection_cell_controller is defined in moveit_controllers.yaml
+        # but only handed to MoveIt when its joints exist.
+        moveit_config.trajectory_execution["moveit_simple_controller_manager"][
+            "controller_names"].append("zivid_inspection_cell_controller")
 
     move_group_launch = generate_move_group_launch(moveit_config)
 
@@ -99,11 +111,33 @@ def launch_setup(context):
         arguments=['--ros-args', '--log-level', 'INFO']
     )
 
-    return [  # move_group_node,
+    nodes = [  # move_group_node,
         move_group_launch,
         rviz_node,
         servo_node,
     ]
+
+    if dual_arm:
+        # Second Servo instance for the zivid_ arm; its command topics live under
+        # its own node name (/zivid_servo_node/delta_twist_cmds, ...).
+        zivid_servo_yaml = load_yaml(
+            "inspection_cell_moveit_config", "config/cell_servo_zivid.yaml")
+        nodes.append(Node(
+            package="moveit_servo",
+            executable="servo_node",
+            name="zivid_servo_node",
+            parameters=[
+                {"moveit_servo": zivid_servo_yaml},
+                {"butterworth_filter_coeff": 10.0},
+                moveit_config.robot_description,
+                moveit_config.robot_description_semantic,
+                moveit_config.robot_description_kinematics,
+                moveit_config.joint_limits
+            ],
+            arguments=['--ros-args', '--log-level', 'INFO']
+        ))
+
+    return nodes
 
 
 def generate_launch_description():
@@ -117,6 +151,8 @@ def generate_launch_description():
                 "mock_sensor_commands", default_value="false", description="Mock sensor commands"),
             DeclareLaunchArgument(
                 "headless_mode", default_value="false", description="Disable GUI"),
+            DeclareLaunchArgument("dual_arm", default_value="false",
+                                  description="Add the second, Zivid-carrying UR5e (cell beta only)."),
             DeclareLaunchArgument("rviz_config", default_value="",
                                   description="Absolute path to an RViz config file. "
                                   "If empty, defaults to this package's config/moveit.rviz."),

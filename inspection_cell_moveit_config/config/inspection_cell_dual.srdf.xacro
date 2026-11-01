@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SRDF for cell beta with the second, Zivid-carrying UR5e (dual_arm:=true).
+
+  The main arm, the turntable and their collision matrix come unchanged from
+  inspection_cell.srdf. This file only adds the zivid_ groups, their home
+  states and the disabled-collision pairs that involve the new links.
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="inspection_cell">
+    <xacro:include filename="$(find inspection_cell_moveit_config)/config/inspection_cell.srdf"/>
+
+    <!-- Mirrors of disc_to_ur5e / ur5e. Tip is the Zivid optical (measurement) frame. -->
+    <group name="zivid_disc_to_ur5e">
+        <chain base_link="object_frame" tip_link="zivid_camera_optical_frame"/>
+    </group>
+    <group name="zivid_ur5e">
+        <chain base_link="zivid_base_link" tip_link="zivid_camera_optical_frame"/>
+    </group>
+
+    <group_state name="Home" group="zivid_disc_to_ur5e">
+        <joint name="turntable_disc_joint" value="0"/>
+        <joint name="zivid_shoulder_pan_joint" value="3.14"/>
+        <joint name="zivid_shoulder_lift_joint" value="-1.8398"/>
+        <joint name="zivid_elbow_joint" value="-1.8224"/>
+        <joint name="zivid_wrist_1_joint" value="-1"/>
+        <joint name="zivid_wrist_2_joint" value="1.57"/>
+        <joint name="zivid_wrist_3_joint" value="0"/>
+    </group_state>
+    <group_state name="Home_ur5e" group="zivid_ur5e">
+        <joint name="zivid_shoulder_pan_joint" value="3.14"/>
+        <joint name="zivid_shoulder_lift_joint" value="-1.8398"/>
+        <joint name="zivid_elbow_joint" value="-1.8224"/>
+        <joint name="zivid_wrist_1_joint" value="-1"/>
+        <joint name="zivid_wrist_2_joint" value="1.57"/>
+        <joint name="zivid_wrist_3_joint" value="0"/>
+    </group_state>
+
+    <!-- Generated with moveit_setup_assistant/collisions_updater (20000 samples),
+         then filtered so arm-to-arm checking doesn't depend on the PLACEHOLDER
+         mount pose. Kept: pairs within the second arm (except Zivid-vs-wrist
+         "Never" pairs, which depend on the placeholder bracket) and pairs of
+         links that are static relative to each other (mounts, bases, table,
+         turntable base). Every moving link of one arm is still checked against
+         the other arm, the table and the turntable disc. Re-run
+         collisions_updater once the real mount and bracket are measured. -->
+    <disable_collisions link1="base_link_inertia" link2="zivid_base_link_inertia" reason="Never"/>
+    <disable_collisions link1="base_link_inertia" link2="zivid_ur5e_mount_link" reason="Never"/>
+    <disable_collisions link1="table_link" link2="zivid_base_link_inertia" reason="Never"/>
+    <disable_collisions link1="table_link" link2="zivid_ur5e_mount_link" reason="Never"/>
+    <disable_collisions link1="turntable_base_link_inertia" link2="zivid_base_link_inertia" reason="Never"/>
+    <disable_collisions link1="turntable_base_link_inertia" link2="zivid_ur5e_mount_link" reason="Never"/>
+    <disable_collisions link1="ur5e_mount_link" link2="zivid_base_link_inertia" reason="Never"/>
+    <disable_collisions link1="ur5e_mount_link" link2="zivid_ur5e_mount_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_base_link_inertia" link2="zivid_shoulder_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_base_link_inertia" link2="zivid_ur5e_mount_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_camera_base_link" link2="zivid_wrist_3_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_forearm_link" link2="zivid_upper_arm_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_forearm_link" link2="zivid_wrist_1_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_forearm_link" link2="zivid_wrist_2_link" reason="Never"/>
+    <disable_collisions link1="zivid_shoulder_link" link2="zivid_upper_arm_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_shoulder_link" link2="zivid_ur5e_mount_link" reason="Never"/>
+    <disable_collisions link1="zivid_wrist_1_link" link2="zivid_wrist_2_link" reason="Adjacent"/>
+    <disable_collisions link1="zivid_wrist_1_link" link2="zivid_wrist_3_link" reason="Never"/>
+    <disable_collisions link1="zivid_wrist_2_link" link2="zivid_wrist_3_link" reason="Adjacent"/>
+</robot>

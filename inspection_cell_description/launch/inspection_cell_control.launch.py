@@ -27,6 +27,9 @@ def launch_setup(context):
     safety_k_position = LaunchConfiguration("safety_k_position")
     launch_rviz = LaunchConfiguration("launch_rviz")
     use_tool_communication = LaunchConfiguration("use_tool_communication")
+    dual_arm = LaunchConfiguration("dual_arm").perform(context).lower() == "true"
+    if dual_arm and cell.perform(context) != "beta":
+        raise RuntimeError("dual_arm:=true is only configured for cell:=beta")
 
     # Initial_positions_file path
     initial_positions_file_path = PathJoinSubstitution(
@@ -126,6 +129,12 @@ def launch_setup(context):
         PathJoinSubstitution([
             FindPackageShare("inspection_cell_description"),
             "config", cell, "visual_parameters.yaml"]),
+        " ",
+        "dual_arm:=",
+        str(dual_arm).lower(),
+        " ",
+        "zivid_robot_ip:=",
+        LaunchConfiguration("zivid_robot_ip"),
     ]
 
     robot_description_content = Command(robot_description_command)
@@ -296,6 +305,15 @@ def launch_setup(context):
         # "freedrive_mode_controller",
         # "tool_contact_controller",
     ]
+    if dual_arm:
+        # The turntable stays with turntable_forward_position_controller; the
+        # zivid 7-DOF controllers claim it too, so they start inactive.
+        controllers_active.append("zivid_ur5e_forward_velocity_controller")
+        controllers_inactive += [
+            "zivid_inspection_cell_controller",
+            "zivid_inspection_cell_forward_position_controller",
+            "zivid_ur5e_controller",
+        ]
     if active_joint_controller.perform(context) == "false":
         controllers_inactive.append(
             initial_joint_controller.perform(context))
@@ -310,6 +328,64 @@ def launch_setup(context):
         controller_spawner(controllers_inactive, active=False),
     ]
 
+    # ================================================================
+    # SECOND ARM (zivid_ UR5e + Zivid camera)
+    # ================================================================
+    # Its hardware interface runs inside the shared controller_manager above.
+    # These are its per-robot helper nodes, namespaced so their services don't
+    # collide with the main arm's (e.g. /zivid/dashboard_client/power_on). No
+    # controller_stopper for it: that node deactivates every non-"consistent"
+    # controller in the shared manager, so arm 2's program stopping would also
+    # stop the main arm's controllers.
+    zivid_arm_nodes = []
+    if dual_arm:
+        zivid_robot_ip = LaunchConfiguration("zivid_robot_ip")
+        zivid_arm_nodes = [
+            Node(
+                package="ur_robot_driver",
+                executable="dashboard_client",
+                name="dashboard_client",
+                namespace="zivid",
+                parameters=[{"robot_ip": zivid_robot_ip}],
+                output="screen",
+                condition=UnlessCondition(sim),
+            ),
+            Node(
+                package="ur_robot_driver",
+                executable="robot_state_helper",
+                name="ur_robot_state_helper",
+                namespace="zivid",
+                output="screen",
+                condition=UnlessCondition(use_fake_hardware),
+                parameters=[
+                    {"headless_mode": headless_mode},
+                    {"robot_ip": zivid_robot_ip},
+                ],
+            ),
+            Node(
+                package="ur_robot_driver",
+                executable="urscript_interface",
+                namespace="zivid",
+                parameters=[{"robot_ip": zivid_robot_ip}],
+                output="screen",
+                condition=UnlessCondition(use_fake_hardware),
+            ),
+            # Capture with: ros2 service call /zivid/capture std_srvs/srv/Trigger
+            Node(
+                package="zivid_camera",
+                executable="zivid_camera",
+                name="zivid_camera",
+                namespace="zivid",
+                output="screen",
+                condition=IfCondition(LaunchConfiguration("launch_zivid")),
+                parameters=[{
+                    "frame_id": "zivid_camera_optical_frame",
+                    "serial_number": LaunchConfiguration("zivid_serial_number"),
+                    "settings_file_path": LaunchConfiguration("zivid_settings_file"),
+                }],
+            ),
+        ]
+
     nodes_to_start = [
         control_node,
         dashboard_client_node,
@@ -319,7 +395,7 @@ def launch_setup(context):
         urscript_interface,
         robot_state_publisher_node,
         rviz_node
-    ] + controller_spawners
+    ] + controller_spawners + zivid_arm_nodes
 
     return nodes_to_start
 
@@ -362,6 +438,19 @@ def generate_launch_description():
                               description="Launch RViz for visualization."),
         DeclareLaunchArgument("launch_moveit", default_value="true",
                               description="Launch MoveIt for motion planning."),
+        # --- Second arm (UR5e + Zivid 2+ MR60) ------------------------------
+        DeclareLaunchArgument("dual_arm", default_value="false",
+                              description="Add the second, Zivid-carrying UR5e (cell beta only)."),
+        DeclareLaunchArgument("zivid_robot_ip", default_value="192.168.0.12",
+                              description="IP of the second UR5e (dual_arm:=true)."),
+        DeclareLaunchArgument("launch_zivid", default_value="true",
+                              description="Start the Zivid camera driver when dual_arm:=true."),
+        DeclareLaunchArgument("zivid_serial_number", default_value="",
+                              description="Zivid serial number (empty = first available camera)."),
+        DeclareLaunchArgument("zivid_settings_file", default_value="",
+                              description="Zivid 3D capture settings .yml (exported from Zivid "
+                              "Studio). Empty = capture fails until settings_yaml is set, "
+                              "e.g. via /zivid/capture_assistant/suggest_settings."),
         # --- Real-time tuning for the 100 Hz control loop -----------------
         # These are read by controller_manager (ros2_control_node). They keep
         # the update loop meeting its deadline even when the rest of the box is

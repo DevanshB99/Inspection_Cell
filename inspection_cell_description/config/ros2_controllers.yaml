@@ -44,6 +44,29 @@ controller_manager:
     ur5e_forward_velocity_controller:
       type: velocity_controllers/JointGroupVelocityController  
 
+    # ====== SECOND ARM (zivid_ UR5e, dual_arm:=true) ======
+    # Mirrors of the controllers above. The 7-DOF ones include the shared
+    # turntable_disc_joint, so at most ONE of inspection_cell_controller,
+    # inspection_cell_forward_position_controller,
+    # zivid_inspection_cell_controller, zivid_inspection_cell_forward_position_controller,
+    # turntable_trajectory_controller and turntable_forward_position_controller
+    # can be active at a time.
+
+    zivid_inspection_cell_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    zivid_inspection_cell_forward_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+    zivid_ur5e_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    zivid_ur5e_forward_position_controller:
+      type: position_controllers/JointGroupPositionController
+
+    zivid_ur5e_forward_velocity_controller:
+      type: velocity_controllers/JointGroupVelocityController
+
     # DEFAULT CONTROLLERS FOR UR5e (FOR REFERENCE)
     io_and_status_controller:
       type: ur_controllers/GPIOController
@@ -192,6 +215,82 @@ ur5e_forward_velocity_controller:
       - wrist_2_joint          
       - wrist_3_joint          
     interface_name: velocity     
+
+# ====== SECOND ARM (zivid_ UR5e) CONTROLLER CONFIGURATIONS ======
+
+# 7 DOF: turntable + second UR5e
+zivid_inspection_cell_controller:
+  ros__parameters:
+    joints:
+      - turntable_disc_joint
+      - zivid_shoulder_pan_joint
+      - zivid_shoulder_lift_joint
+      - zivid_elbow_joint
+      - zivid_wrist_1_joint
+      - zivid_wrist_2_joint
+      - zivid_wrist_3_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: true
+    allow_nonzero_velocity_at_trajectory_end: false
+    action_monitor_rate: 10.0
+    constraints:
+      goal_time: 2.0
+      stopped_velocity_tolerance: 0.05
+
+zivid_inspection_cell_forward_position_controller:
+  ros__parameters:
+    joints:
+      - turntable_disc_joint
+      - zivid_shoulder_pan_joint
+      - zivid_shoulder_lift_joint
+      - zivid_elbow_joint
+      - zivid_wrist_1_joint
+      - zivid_wrist_2_joint
+      - zivid_wrist_3_joint
+    interface_name: position
+
+zivid_ur5e_controller:
+  ros__parameters:
+    joints:
+      - zivid_shoulder_pan_joint
+      - zivid_shoulder_lift_joint
+      - zivid_elbow_joint
+      - zivid_wrist_1_joint
+      - zivid_wrist_2_joint
+      - zivid_wrist_3_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false
+    allow_nonzero_velocity_at_trajectory_end: false
+
+zivid_ur5e_forward_position_controller:
+  ros__parameters:
+    joints:
+      - zivid_shoulder_pan_joint
+      - zivid_shoulder_lift_joint
+      - zivid_elbow_joint
+      - zivid_wrist_1_joint
+      - zivid_wrist_2_joint
+      - zivid_wrist_3_joint
+    interface_name: position
+
+zivid_ur5e_forward_velocity_controller:
+  ros__parameters:
+    joints:
+      - zivid_shoulder_pan_joint
+      - zivid_shoulder_lift_joint
+      - zivid_elbow_joint
+      - zivid_wrist_1_joint
+      - zivid_wrist_2_joint
+      - zivid_wrist_3_joint
+    interface_name: velocity
 
 # ====== DEFAULT CONTROLLERS FOR UR5e (FOR REFERENCE) ======
 

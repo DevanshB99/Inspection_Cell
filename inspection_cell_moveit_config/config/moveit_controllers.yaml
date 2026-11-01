@@ -39,3 +39,16 @@ moveit_simple_controller_manager:
       - wrist_3_joint
     default: true
     action_ns: follow_joint_trajectory  
+  # Second arm. move_group.launch.py adds it to controller_names when dual_arm:=true.
+  zivid_inspection_cell_controller:
+    type: FollowJointTrajectory
+    joints:
+      - turntable_disc_joint
+      - zivid_shoulder_pan_joint
+      - zivid_shoulder_lift_joint
+      - zivid_elbow_joint
+      - zivid_wrist_1_joint
+      - zivid_wrist_2_joint
+      - zivid_wrist_3_joint
+    default: true
+    action_ns: follow_joint_trajectory

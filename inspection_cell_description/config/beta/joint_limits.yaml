@@ -69,3 +69,65 @@ joint_limits:
     max_acceleration: 1.0
     has_effort_limits: true
     max_effort: 150.0
+  # Second arm (dual_arm:=true): same limits as the main arm. Only MoveIt and
+  # Servo read these prefixed keys; the URDF limits come from the keys above.
+  zivid_shoulder_pan_joint:
+    has_position_limits: true
+    min_position: -6.2832
+    max_position: 6.2832
+    has_velocity_limits: true
+    max_velocity: 3.1416
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+    has_effort_limits: true
+    max_effort: 150.0
+  zivid_shoulder_lift_joint:
+    has_position_limits: true
+    min_position: -6.2832
+    max_position: 6.2832
+    has_velocity_limits: true
+    max_velocity: 3.1416
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+    has_effort_limits: true
+    max_effort: 150.0
+  zivid_elbow_joint:
+    has_position_limits: true
+    min_position: -6.2832
+    max_position: 6.2832
+    has_velocity_limits: true
+    max_velocity: 3.1416
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+    has_effort_limits: true
+    max_effort: 150.0
+  zivid_wrist_1_joint:
+    has_position_limits: true
+    min_position: -6.2832
+    max_position: 6.2832
+    has_velocity_limits: true
+    max_velocity: 3.1416
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+    has_effort_limits: true
+    max_effort: 150.0
+  zivid_wrist_2_joint:
+    has_position_limits: true
+    min_position: -6.2832
+    max_position: 6.2832
+    has_velocity_limits: true
+    max_velocity: 3.1416
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+    has_effort_limits: true
+    max_effort: 150.0
+  zivid_wrist_3_joint:
+    has_position_limits: true
+    min_position: -6.2832
+    max_position: 6.2832
+    has_velocity_limits: true
+    max_velocity: 3.1416
+    has_acceleration_limits: true
+    max_acceleration: 1.0
+    has_effort_limits: true
+    max_effort: 150.0

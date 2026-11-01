@@ -11,7 +11,19 @@
    <!-- ================================================================ -->
    <xacro:arg name="cell" default="alpha"/>
    <xacro:property name="cell" value="$(arg cell)"/>
-   
+
+   <!-- ================================================================ -->
+   <!-- SECOND ARM (UR5e + Zivid) -->
+   <!-- ================================================================ -->
+   <!-- Adds the Zivid-carrying UR5e (config/${cell}/zivid_arm/) that shares the
+        turntable. Its macro file must be included BEFORE the cell macro: see the
+        note at the top of urdf/inc/zivid_arm.xacro. -->
+   <xacro:arg name="dual_arm" default="false"/>
+   <xacro:property name="dual_arm" value="$(arg dual_arm)"/>
+   <xacro:if value="${dual_arm}">
+    <xacro:include filename="$(find inspection_cell_description)/urdf/inc/zivid_arm.xacro"/>
+   </xacro:if>
+
    <!-- ================================================================ -->
    <!-- IMPORT MAIN MACRO -->
    <!-- ================================================================ -->
@@ -97,6 +109,16 @@
    <xacro:property name="is_sim_ignition" value="$(arg sim_ignition)"/>
    <xacro:property name="hash" value="$(arg hash)" />
 
+   <!-- Second arm. Ports must differ from the main arm's (50001-50004) because
+        both UR drivers run in the same controller_manager. Configure the
+        External Control URCap on 192.168.0.12 with host port = zivid_script_sender_port. -->
+   <xacro:arg name="zivid_robot_ip" default="192.168.0.12"/>
+   <xacro:arg name="zivid_reverse_port" default="50005"/>
+   <xacro:arg name="zivid_script_sender_port" default="50006"/>
+   <xacro:arg name="zivid_trajectory_port" default="50007"/>
+   <xacro:arg name="zivid_script_command_port" default="50008"/>
+   <xacro:arg name="zivid_config_dir" default="$(find inspection_cell_description)/config/${cell}/zivid_arm"/>
+
    <!-- ================================================================ -->
    <!-- OBJECT FRAME -->
    <!-- ================================================================ -->
@@ -181,6 +203,49 @@
      <ur5e_origin xyz="0 0 0" rpy="0 0 0" />
      <turntable_origin xyz="0.75 0 0" rpy="0 0 0" />
    </xacro:inspection_cell>
+
+   <xacro:if value="${dual_arm}">
+     <xacro:zivid_arm
+       tf_prefix="zivid_"
+       camera_prefix="zivid_camera_"
+       parent="$(arg tf_prefix)ur5e_mount_link"
+       joint_limits_parameters_file="$(arg joint_limit_params)"
+       kinematics_parameters_file="$(arg zivid_config_dir)/kinematics.yaml"
+       physical_parameters_file="$(arg physical_params)"
+       visual_parameters_file="$(arg visual_params)"
+       initial_positions="${xacro.load_yaml('$(arg zivid_config_dir)/initial_positions.yaml')}"
+       safety_limits="$(arg safety_limits)"
+       safety_pos_margin="$(arg safety_pos_margin)"
+       safety_k_position="$(arg safety_k_position)"
+       use_fake_hardware="$(arg use_fake_hardware)"
+       mock_sensor_commands="$(arg mock_sensor_commands)"
+       headless_mode="$(arg headless_mode)"
+       robot_ip="$(arg zivid_robot_ip)"
+       script_filename="$(arg script_filename)"
+       output_recipe_filename="$(arg output_recipe_filename)"
+       input_recipe_filename="$(arg input_recipe_filename)"
+       reverse_ip="$(arg reverse_ip)"
+       reverse_port="$(arg zivid_reverse_port)"
+       script_sender_port="$(arg zivid_script_sender_port)"
+       trajectory_port="$(arg zivid_trajectory_port)"
+       script_command_port="$(arg zivid_script_command_port)"
+       non_blocking_read="$(arg non_blocking_read)"
+       robot_receive_timeout="$(arg robot_receive_timeout)"
+       use_tool_communication="$(arg use_tool_communication)">
+       <!-- 1st block = mount origin, relative to the main arm's ur5e_mount_link
+            (measured 2026-10-07): same orientation, 1.18 m along its -y, which
+            places arm 2 symmetric to arm 1 about the turntable (y = -0.59). -->
+       <origin xyz="0 -1.18 0" rpy="0 0 0"/>
+       <!-- 2nd block = camera origin, tool0 -> Zivid base_link (camera bottom face).
+            Zivid On-Arm Mount OA111 (ISO 50), clocked so the camera sits on tool0's -y
+            side. Camera looks along tool0 +z (its +x), its top points along tool0 -y
+            (its +z). Offsets are ESTIMATES read off the OA111 drawing: camera plate face
+            ~62 mm off the flange axis, hole pattern ~19 mm out from the flange face.
+            The base_link origin is assumed to be at the hole pattern. Refine with Zivid
+            hand-eye calibration. -->
+       <origin xyz="0 -0.062 0.019" rpy="0 ${-pi/2} ${pi/2}"/>
+     </xacro:zivid_arm>
+   </xacro:if>
 
    <!-- ================================================================ -->
    <!-- GAZEBO PLUGINS -->
